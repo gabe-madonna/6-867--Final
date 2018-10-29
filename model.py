@@ -28,7 +28,7 @@ class RNN:
 
         return model
 
-    def train(self, model, train_x, train_y, test_x, test_y, epochs):
+    def train(self, model, train_x, train_y, epochs):
         """
         Train the model
         """
@@ -39,3 +39,6 @@ class RNN:
         return history
 
     def test():
+        """
+        Test the model on testing data
+        """
