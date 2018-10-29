@@ -44,7 +44,7 @@ class RNN:
         
         return history
 
-    def test(test_X, test_Y):
+    def test(self, test_X, test_Y):
         '''
         test the model
         '''
