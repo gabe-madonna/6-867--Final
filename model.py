@@ -9,7 +9,12 @@ class KerasLSTM:
         model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
         # dense takes in output dimensionality
         model.add(Dense(output_dim))
+        # add softmax activation
         model.add(Activation('softmax'))
+        # indicate loss and optimizer
         model.compile(loss='categorical_crossentropy', optimizer='sgd')
 
         return model
+
+    def train(self, model, train_x, train_y, test_x, test_y, epochs):
+        model.fit(train_x, train_y, epochs=epochs, validation_data=(test_x, test_y))
