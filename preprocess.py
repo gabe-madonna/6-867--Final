@@ -1,15 +1,26 @@
 import numpy as np
-import os
+import string
+from utils import *
 
-HOME = '6-867--Final'
-NUM2LET = {1: 'a', 2: 'b', 3: 'c'}
+NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
+
 
 def gen_letter(fname):
+    '''
+    generate np array from fname
+    :param fname (str):
+    :return letter (np.array):
+    '''
     letter = np.genfromtxt(fname, delimiter=",")
     return letter
 
 
 def extract_f_num(fname):
+    '''
+    get the index of the letter from its file name
+    :param fname (str):
+    :return num (int):
+    '''
     assert len(fname) == 15
     num = int(fname[7:11])
     return num
@@ -50,71 +61,36 @@ def gen_letter_dict():
     return letters
 
 
-def assert_home():
+def partition(letters, ratio=.2):
     '''
-    safe way to make sure that current working directory is home
-    :return None
+    partitions letters into two dicts by partitioning each letter by ratio
+    :return train, test (dict, dict): partitions of letters
     '''
-    curr = os.getcwd()
-    if not split_dir(curr)[-1] == HOME:
-        raise ValueError('\nCurrent Directory:\n' + curr + '\nExpected: ../' + HOME)
+    test, train = {}, {}
+
+    # build masks by exercise, then concatenate into aggregate mask
+    for label in letters:
+        n = len(letters[label])
+        r = int(n*ratio)
+        mask = r*[0] + (n-r)*[1]
+        np.random.shuffle(mask)
+        train[label] = mask_list(letters[label], mask)
+        test[label] = mask_list(letters[label], mask, inverse=True)
+
+    return train, test
 
 
-def split_dir(dirr):
-    '''
-    get list form of directory string componenets(without any empty strings)
-    :param dirr:
-    :return:
-    '''
-    dir_list = list(filter(lambda d: d, dirr.split('\\')))
-    return dir_list
-
-
-def go_home():
-    '''
-    safe way to go to home directory
-    :return:
-    '''
-    curr_list = split_dir(os.getcwd())
-    ind = curr_list.index(HOME)
-    if ind == -1:
-        raise ValueError('Cannot find', HOME, 'in current path')
-    else:
-        n_levels = len(curr_list) - ind - 1
-        for i in range(n_levels):
-            os.chdir('..')
-
-
-def chdir(dirr, reverse=False):
-    '''
-    easy, safe way to go into and out of directories
-    :param dirr: directory to go into or out of
-    :param reverse: return from directory if True, otherwise go into it
-    :return: None
-    '''
-    if reverse:
-        dirr_list = split_dir(dirr)
-        if '..'in dirr_list:
-            raise ValueError('unexpected directory "\\..": unreversable')
-        n_levels = len(dirr_list)
-        cwd = os.getcwd()
-        if not cwd.split('\\')[-n_levels:] == dirr_list:
-            raise ValueError('Current Directory:\n'+cwd+'\nExpected Directory:\n'+dirr)
-        dirr = '..\\' * n_levels
-    os.chdir(dirr)
-
-
-def mask_list(X_list, mask, inverse=False):
+def mask_list(letters, mask, inverse=False):
     '''
     Makes it easy to filter an iterable using a mask of ones and zeros
-    :param X_list: iterable to be filtered
-    :param mask: iterable of booleans (or values to be evaluated as booleans)
-    :param inverse: boolean for whether to return the inverse of the mask
-    :return masked_list: subset of X_list after masking
+    :param letters (iterable): iterable to be filtered
+    :param mask (iterable): iterable of booleans
+    :param inverse (bool): whether to return the inverse of the mask
+    :return masked_list (list): subset of letters after masking
     '''
-    if not len(mask) == len(X_list):
-        raise AttributeError('Length mismatch - X_list:', str(len(X_list)), 'mask:', str(len(mask)))
+    if not len(mask) == len(letters):
+        raise AttributeError('Length mismatch - letters:', str(len(letters)), 'mask:', str(len(mask)))
     if inverse:
         mask = [not bool(mask[i]) for i in range(len(mask))]
-    masked_list = [X_list[i] for i in range(len(mask)) if mask[i]]
+    masked_list = [letters[i] for i in range(len(mask)) if mask[i]]
     return masked_list
