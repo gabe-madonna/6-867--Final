@@ -12,8 +12,13 @@ def gen_letter(fname):
     :return letter (np.array): n by 3 matrix for letter
     '''
     letter = np.genfromtxt(fname, delimiter=",")
+    letter = norm(letter, n)
     return letter
 
+
+def norm(letter, n):
+    raise NotImplementedError()
+    return letter
 
 def extract_f_num(fname):
     '''
