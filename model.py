@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers import LSTM
 
 import numpy as np
@@ -30,7 +30,7 @@ class RNN:
         self.model.add(Activation('softmax'))
         # indicate loss and optimizer
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
-        return model
+        return self.model
 
     def train(self, model, train_x, train_y, epochs):
         '''
@@ -58,3 +58,22 @@ class RNN:
                 totalAccuracy += 1
         totalAccuracy/= len(test_Y)
         print('Test Accuracy: %.3f' % totalAccuracy)
+
+class CNN:
+
+    def __init__(self):
+        '''
+        initialize the Sequential Model
+        '''
+        self.model = Sequential()
+
+    def generate(self):
+        
+
+
+
+if __name__ == '__main__':
+    
+    rnn = RNN()
+    model = rnn.generate(100, 50, 3, 20, 10)
+    print(model)
