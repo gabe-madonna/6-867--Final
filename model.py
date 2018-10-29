@@ -18,3 +18,6 @@ class KerasLSTM:
 
     def train(self, model, train_x, train_y, test_x, test_y, epochs):
         model.fit(train_x, train_y, epochs=epochs, validation_data=(test_x, test_y))
+
+    def test():
+        
