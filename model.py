@@ -13,11 +13,19 @@ class KerasLSTM:
         model.add(Activation('softmax'))
         # indicate loss and optimizer
         model.compile(loss='categorical_crossentropy', optimizer='sgd')
-
         return model
 
     def train(self, model, train_x, train_y, test_x, test_y, epochs):
         model.fit(train_x, train_y, epochs=epochs, validation_data=(test_x, test_y))
 
-    def test():
-        
+    def test(test_X, test_Y):
+        # make a prediction
+        yhat = model.predict(test_X)
+        test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
+        # calculate RMSE
+        totalAccuracy = 0.0
+        for i in range(len(test_Y)):
+            if test_Y[i] == yhat[i]:
+                totalAccuracy += 1
+        totalAccuracy/= len(test_Y)
+        print('Test Accuracy: %.3f' % totalAccuracy)
