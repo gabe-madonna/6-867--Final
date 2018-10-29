@@ -55,3 +55,19 @@ def chdir(dirr, reverse=False):
             raise ValueError('Current Directory:\n'+cwd+'\nExpected Directory:\n'+dirr)
         dirr = '..\\' * n_levels
     os.chdir(dirr)
+
+
+def mask_list(letters, mask, inverse=False):
+    '''
+    Makes it easy to filter an iterable using a mask of ones and zeros
+    :param letters (iterable): iterable to be filtered
+    :param mask (iterable): iterable of booleans
+    :param inverse (bool): whether to return the inverse of the mask
+    :return masked_list (list): subset of letters after masking
+    '''
+    if not len(mask) == len(letters):
+        raise AttributeError('Length mismatch - letters:', str(len(letters)), 'mask:', str(len(mask)))
+    if inverse:
+        mask = [not bool(mask[i]) for i in range(len(mask))]
+    masked_list = [letters[i] for i in range(len(mask)) if mask[i]]
+    return masked_list

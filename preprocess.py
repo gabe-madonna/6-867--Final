@@ -8,8 +8,8 @@ NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
 def gen_letter(fname):
     '''
     generate np array from fname
-    :param fname (str):
-    :return letter (np.array):
+    :param fname (str): name of file
+    :return letter (np.array): n by 3 matrix for letter
     '''
     letter = np.genfromtxt(fname, delimiter=",")
     return letter
@@ -18,8 +18,8 @@ def gen_letter(fname):
 def extract_f_num(fname):
     '''
     get the index of the letter from its file name
-    :param fname (str):
-    :return num (int):
+    :param fname (str): name of file
+    :return num (int): index of file
     '''
     assert len(fname) == 15
     num = int(fname[7:11])
@@ -30,7 +30,7 @@ def gen_labels_dict(fname):
     '''
     generate a dict mapping letter index (one-indexed) to letter label
     :param fname:
-    :return:
+    :return ind2let (dict):
     '''
     ind2let = {}
     keys = np.genfromtxt(fname, delimiter=",")
@@ -68,7 +68,6 @@ def partition(letters, ratio=.2):
     '''
     test, train = {}, {}
 
-    # build masks by exercise, then concatenate into aggregate mask
     for label in letters:
         n = len(letters[label])
         r = int(n*ratio)
@@ -80,17 +79,32 @@ def partition(letters, ratio=.2):
     return train, test
 
 
-def mask_list(letters, mask, inverse=False):
+def to_matrices(letters):
     '''
-    Makes it easy to filter an iterable using a mask of ones and zeros
-    :param letters (iterable): iterable to be filtered
-    :param mask (iterable): iterable of booleans
-    :param inverse (bool): whether to return the inverse of the mask
-    :return masked_list (list): subset of letters after masking
+    takes letters dict and turns into
+    :param letters: dict mapping letters to lists of arrays for those letters
+    :return X, y: np.3darray and np.1darray of stacked letter matrices and their corresponding labels
     '''
-    if not len(mask) == len(letters):
-        raise AttributeError('Length mismatch - letters:', str(len(letters)), 'mask:', str(len(mask)))
-    if inverse:
-        mask = [not bool(mask[i]) for i in range(len(mask))]
-    masked_list = [letters[i] for i in range(len(mask)) if mask[i]]
-    return masked_list
+    X = []
+    y = []
+    labels = sorted(letters.keys())
+    for label in labels:
+        X += letters[label]
+        y += [label]*len(letters[label])
+    X, y = np.array(X), np.array(y)
+    y = y_encode(y)
+    return X, y
+
+
+def y_encode(y):
+    '''
+    one-hot encode multi-class label data
+    :param y: np.1darray of letter labels
+    :return one_hot: np.2darray of 1-hot encoded label vector
+    '''
+    let2num = dict((val, key) for (key, val) in NUM2LET.items())
+    one_hot = np.zeros((len(y), max(NUM2LET.keys())))
+    for i, yi in enumerate(y):
+        ind = let2num[yi]
+        one_hot[i][ind-1] = 1
+    return one_hot
