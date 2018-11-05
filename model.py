@@ -22,6 +22,9 @@ class RNN:
         :output_dim (int): number of dimensions in the output i.e. number of classes
         :layers (int): number of layers
         '''
+
+        print("===== BUILDING MODEL ======")
+
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
             self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
@@ -31,6 +34,10 @@ class RNN:
         self.model.add(Activation('softmax'))
         # indicate loss and optimizer
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
+
+        print("===== FINISHED BUILDING MODEL ======")
+        print(self.model)
+
         return self.model
 
     def train(self, train_x, train_y, epochs=50):
@@ -41,7 +48,12 @@ class RNN:
         '''
         # train the model
         # validation_data=(test_x, test_y),
+
+        print("===== TRAINING MODEL ======")
+
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
+
+        print("===== FINISHED TRAINING MODEL ======")
         
         return history
 
@@ -50,6 +62,8 @@ class RNN:
         test the model
         '''
         # make a prediction
+        print("===== TESTING MODEL ======")
+
         yhat = model.predict(test_X)
         test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
         # calculate RMSE
@@ -58,7 +72,11 @@ class RNN:
             if test_Y[i] == yhat[i]:
                 totalAccuracy += 1
         totalAccuracy/= len(test_Y)
+
+        print("===== FINISHED TESTING MODEL ======")
+
         print('Test Accuracy: %.3f' % totalAccuracy)
+        
 
 class CNN:
 
