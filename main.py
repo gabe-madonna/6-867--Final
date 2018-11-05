@@ -15,5 +15,5 @@ def main():
     model.test(X_test, y_test)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

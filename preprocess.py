@@ -1,24 +1,40 @@
 import numpy as np
 import string
 from utils import *
+from scipy.interpolate import interp1d
+
 
 NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
 
 
-def gen_letter(fname):
+def gen_letter(fname, norm_n=None):
     '''
     generate np array from fname
     :param fname (str): name of file
     :return letter (np.array): n by 3 matrix for letter
     '''
     letter = np.genfromtxt(fname, delimiter=",")
-    letter = norm(letter, n)
+    letter = norm(letter, norm_n)
     return letter
 
 
-def norm(letter, n):
-    raise NotImplementedError()
-    return letter
+def norm(letter, n=25, interp_kind='linear'):
+    '''
+    :param letter:
+    :param n:
+    :param interp_kind:
+    :return:
+    '''
+    if n is None:
+        return letter
+    # generate dummy index of letter array and new letter array
+    index = np.arange(0, len(letter))
+    new_index = np.arange(0, n)
+    # function f to interpolate column-wise and build normalized rep
+    f = interp1d(index, letter.T, kind=interp_kind, assume_sorted=True)
+    norm_letter = f(new_index).T
+    return norm_letter
+
 
 def extract_f_num(fname):
     '''
@@ -52,17 +68,19 @@ def gen_letter_dict():
     assert_home()
     data_dir = 'data'
     chdir(data_dir)
-
+    print("Generating labels")
     ind2label = gen_labels_dict('labels.csv')
     letters = {letter: [] for letter in ind2label.values()}
     f_names = sorted([fname for fname in os.listdir() if fname[:6] == 'letter'])
-    for fname in f_names:
+    print("Reading in letters")
+    for fname in f_names[:200]:
+        print('   Reading', fname)
         letter = gen_letter(fname)
         num = extract_f_num(fname)
         label = ind2label[num]
         letters[label].append(letter)
-
     chdir(data_dir, reverse=True)
+    print("Done reading letters")
     return letters
 
 

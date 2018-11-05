@@ -59,15 +59,15 @@ class RNN:
         totalAccuracy/= len(test_Y)
         print('Test Accuracy: %.3f' % totalAccuracy)
 
-class CNN:
-
-    def __init__(self):
-        '''
-        initialize the Sequential Model
-        '''
-        self.model = Sequential()
-
-    def generate(self):
+# class CNN:
+#
+#     def __init__(self):
+#         '''
+#         initialize the Sequential Model
+#         '''
+#         self.model = Sequential()
+#
+#     def generate(self):
         
 
 
