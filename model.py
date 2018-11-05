@@ -13,6 +13,11 @@ class RNN:
         initialize the Sequential Model
         '''
         self.model = Sequential()
+        self.layers = 1
+        self.output_dim = 20
+        self.hidden_size = 50
+        self.input_shape = (50, 3)
+        self.epochs = 50
 
     def generate(self, hidden_size=50, output_dim=20, input_shape=(50,3), layers=1):
         '''
@@ -41,6 +46,11 @@ class RNN:
         print("===== FINISHED BUILDING MODEL ======")
         print(self.model)
 
+        self.layers = layers
+        self.output_dim = output_dim
+        self.hidden_size = hidden_size
+        self.input_shape = input_shape
+
         return self.model
 
     def train(self, train_x, train_y, epochs=50):
@@ -51,6 +61,8 @@ class RNN:
         '''
         # train the model
         # validation_data=(test_x, test_y),
+
+        self.epochs = epochs
 
         print("===== TRAINING MODEL ======")
 
@@ -83,8 +95,11 @@ class RNN:
 
         # print('Test Accuracy: %.3f' % totalAccuracy)
 
-        # with open("results.txt", "a") as myfile:
-        #     myfile.write(str(datetime.datetime.now()) + ' Test Accuracy: %.3f' % totalAccuracy + '\n')
+        with open("results.txt", "a") as myfile:
+            myfile.write("-------------------")
+            myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+            myfile.write("HYPERPARAMS")
+            myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
         
 
 class CNN:
