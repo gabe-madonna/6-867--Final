@@ -13,7 +13,7 @@ class RNN:
         '''
         self.model = Sequential()
 
-    def generate(self, hidden_size, timesteps, features, output_dim, layers):
+    def generate(self, hidden_size=50, timesteps=50, features=3, output_dim=20, layers=1):
         '''
         generate RNN defined
         :hidden_size (int): number of units in each hidden layer (LSTM)
@@ -23,7 +23,8 @@ class RNN:
         :layers (int): number of layers
         '''
         # 50 for number of timesteps, 3 for features
-        self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
+        for i in range(layers):
+            self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
         # dense takes in output dimensionality
         self.model.add(Dense(output_dim))
         # add softmax activation
