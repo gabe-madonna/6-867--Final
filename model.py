@@ -64,7 +64,7 @@ class RNN:
         # make a prediction
         print("===== TESTING MODEL ======")
 
-        yhat = model.predict(test_X)
+        yhat = self.model.predict(test_X)
         test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
         # calculate RMSE
         totalAccuracy = 0.0

@@ -1,10 +1,6 @@
 import numpy as np
-import string
 from utils import *
 from scipy.interpolate import interp1d
-
-
-NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
 
 
 def gen_letter(fname, norm_n=None):
@@ -60,7 +56,7 @@ def gen_labels_dict(fname):
     return ind2let
 
 
-def gen_letter_dict():
+def gen_letter_dict(norm_n=None):
     '''
     iterates over data in /data and generates a dict of the result
     :return letters (dict): maps letter to list of np arrays of that letter
@@ -75,7 +71,7 @@ def gen_letter_dict():
     print("Reading in letters")
     for fname in f_names[:200]:
         print('   Reading', fname)
-        letter = gen_letter(fname)
+        letter = gen_letter(fname, norm_n=norm_n)
         num = extract_f_num(fname)
         label = ind2label[num]
         letters[label].append(letter)

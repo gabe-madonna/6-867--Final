@@ -1,6 +1,8 @@
 import os
+import string
 
 HOME = '6-867--Final'
+NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
 
 
 def assert_home():
