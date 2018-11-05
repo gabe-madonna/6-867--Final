@@ -3,6 +3,7 @@ from keras.models import Sequential
 from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers import LSTM
 
+import datetime
 import numpy as np
 
 class RNN:
@@ -13,7 +14,7 @@ class RNN:
         '''
         self.model = Sequential()
 
-    def generate(self, hidden_size=50, timesteps=50, features=3, output_dim=20, layers=1):
+    def generate(self, hidden_size=50, output_dim=20, input_shape=(50,3), layers=1):
         '''
         generate RNN defined
         :hidden_size (int): number of units in each hidden layer (LSTM)
@@ -27,13 +28,15 @@ class RNN:
 
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
-            self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
+            self.model.add(LSTM(hidden_size, input_shape=input_shape, return_sequences=True))
+        # flatten output befor elast dense later
+        self.model.add(Flatten())
         # dense takes in output dimensionality
         self.model.add(Dense(output_dim))
         # add softmax activation
         self.model.add(Activation('softmax'))
         # indicate loss and optimizer
-        self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
+        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("===== FINISHED BUILDING MODEL ======")
         print(self.model)
@@ -63,19 +66,25 @@ class RNN:
         '''
         # make a prediction
         print("===== TESTING MODEL ======")
+        loss, acc = self.model.evaluate(test_X, test_Y, verbose=0)
+        print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
 
-        yhat = self.model.predict(test_X)
-        test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-        # calculate RMSE
-        totalAccuracy = 0.0
-        for i in range(len(test_Y)):
-            if test_Y[i] == yhat[i]:
-                totalAccuracy += 1
-        totalAccuracy/= len(test_Y)
+        # yhat = self.model.predict(test_X, verbose=1)
+        # # print(yhat)
+        # # test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
+        # # calculate RMSE
+        # totalAccuracy = 0.0
+        # for i in range(len(test_Y)):
+        #     if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
+        #         totalAccuracy += 1
+        # totalAccuracy/= len(test_Y)
 
-        print("===== FINISHED TESTING MODEL ======")
+        # print("===== FINISHED TESTING MODEL ======")
 
-        print('Test Accuracy: %.3f' % totalAccuracy)
+        # print('Test Accuracy: %.3f' % totalAccuracy)
+
+        # with open("results.txt", "a") as myfile:
+        #     myfile.write(str(datetime.datetime.now()) + ' Test Accuracy: %.3f' % totalAccuracy + '\n')
         
 
 class CNN:

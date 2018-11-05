@@ -61,21 +61,23 @@ def gen_letter_dict(norm_n=None):
     iterates over data in /data and generates a dict of the result
     :return letters (dict): maps letter to list of np arrays of that letter
     '''
-    assert_home()
+    # assert_home()
     data_dir = 'data'
-    chdir(data_dir)
+    os.chdir(data_dir)
+    # chdir(data_dir)
     print("Generating labels")
     ind2label = gen_labels_dict('labels.csv')
     letters = {letter: [] for letter in ind2label.values()}
     f_names = sorted([fname for fname in os.listdir() if fname[:6] == 'letter'])
     print("Reading in letters")
-    for fname in f_names[:200]:
+    for fname in f_names[:]:
         print('   Reading', fname)
         letter = gen_letter(fname, norm_n=norm_n)
         num = extract_f_num(fname)
         label = ind2label[num]
         letters[label].append(letter)
-    chdir(data_dir, reverse=True)
+    # chdir(data_dir, reverse=True)
+    os.chdir('..')
     print("Done reading letters")
     return letters
 
