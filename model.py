@@ -33,7 +33,7 @@ class RNN:
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
         return self.model
 
-    def train(self, model, train_x, train_y, epochs):
+    def train(self, train_x, train_y, epochs=50):
         '''
         train the model
         :train_x (np.array): inputs (x)
