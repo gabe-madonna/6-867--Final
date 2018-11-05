@@ -13,7 +13,7 @@ class RNN:
         '''
         self.model = Sequential()
 
-    def generate(self, hidden_size, timesteps, features, output_dim, layers):
+    def generate(self, hidden_size=50, timesteps=50, features=3, output_dim=20, layers=1):
         '''
         generate RNN defined
         :hidden_size (int): number of units in each hidden layer (LSTM)
@@ -22,17 +22,25 @@ class RNN:
         :output_dim (int): number of dimensions in the output i.e. number of classes
         :layers (int): number of layers
         '''
+
+        print("===== BUILDING MODEL ======")
+
         # 50 for number of timesteps, 3 for features
-        self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
+        for i in range(layers):
+            self.model.add(LSTM(hidden_size, input_shape=(timesteps, features)))
         # dense takes in output dimensionality
         self.model.add(Dense(output_dim))
         # add softmax activation
         self.model.add(Activation('softmax'))
         # indicate loss and optimizer
         self.model.compile(loss='categorical_crossentropy', optimizer='sgd')
+
+        print("===== FINISHED BUILDING MODEL ======")
+        print(self.model)
+
         return self.model
 
-    def train(self, model, train_x, train_y, epochs):
+    def train(self, train_x, train_y, epochs=50):
         '''
         train the model
         :train_x (np.array): inputs (x)
@@ -40,7 +48,12 @@ class RNN:
         '''
         # train the model
         # validation_data=(test_x, test_y),
+
+        print("===== TRAINING MODEL ======")
+
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
+
+        print("===== FINISHED TRAINING MODEL ======")
         
         return history
 
@@ -49,6 +62,8 @@ class RNN:
         test the model
         '''
         # make a prediction
+        print("===== TESTING MODEL ======")
+
         yhat = model.predict(test_X)
         test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
         # calculate RMSE
@@ -57,19 +72,33 @@ class RNN:
             if test_Y[i] == yhat[i]:
                 totalAccuracy += 1
         totalAccuracy/= len(test_Y)
-        print('Test Accuracy: %.3f' % totalAccuracy)
 
-# class CNN:
-#
-#     def __init__(self):
-#         '''
-#         initialize the Sequential Model
-#         '''
-#         self.model = Sequential()
-#
-#     def generate(self):
+        print("===== FINISHED TESTING MODEL ======")
+
+        print('Test Accuracy: %.3f' % totalAccuracy)
         
 
+class CNN:
+
+    def __init__(self):
+        '''
+        initialize the Sequential Model
+        '''
+        self.model = Sequential()
+
+    def generate(self, input_shape):
+        '''
+        generate the model
+        '''
+        self.model.add(Conv2D(32, kernel_size=(3, 3), strides=2, activation='relu', input_shape=input_shape))
+        self.model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+        self.model.add(Conv2D(64, (3, 3), activation='relu'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Flatten())
+        self.model.add(Dense(1000, activation='relu'))
+        # 20 for number of classes
+        self.model.add(Dense(20, activation='softmax'))
+        return self.model
 
 
 if __name__ == '__main__':
