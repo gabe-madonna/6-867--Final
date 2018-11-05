@@ -1,8 +1,24 @@
 import os
 import string
+import matplotlib.pyplot as plt
+
 
 HOME = '6-867--Final'
 NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
+
+
+def plot_letter(letter, label=None):
+    '''
+    plot a given letter
+    :param letter (np.2darray): letter array
+    :param label (str): letter type
+    :return None:
+    '''
+    x, y, f = letter.T
+    plt.plot(x, y)
+    if label is not None:
+        plt.title(label)
+    plt.show()
 
 
 def assert_home():

@@ -1,6 +1,7 @@
 import numpy as np
 from utils import *
-from scipy.interpolate import interp1d
+from scipy import interpolate
+
 
 
 def gen_letter(fname, norm_n=None):
@@ -14,7 +15,7 @@ def gen_letter(fname, norm_n=None):
     return letter
 
 
-def norm(letter, n=25, interp_kind='linear'):
+def norm(letter, n=25, plot=False):
     '''
     :param letter:
     :param n:
@@ -23,12 +24,38 @@ def norm(letter, n=25, interp_kind='linear'):
     '''
     if n is None:
         return letter
-    # generate dummy index of letter array and new letter array
-    index = np.arange(0, len(letter))
-    new_index = np.arange(0, n)
+
+    # spline norm of x and y
+    x, y, f = letter.T
+    safe_inds = np.where(np.abs(np.diff(x)) + np.abs(np.diff(y)) > 0)
+    x2 = np.r_[x[safe_inds], x[-1]]
+    y2 = np.r_[y[safe_inds], y[-1]]
+    tck, u = interpolate.splprep(np.array([x2, y2]), s=.01)
+    unew = np.linspace(0, 1, n)
+    norm_x, norm_y = interpolate.splev(unew, tck)
+
+    # linear interpolation of force
+    index = np.linspace(1, len(letter), len(letter))
+    new_index = np.linspace(1, len(letter), n)
     # function f to interpolate column-wise and build normalized rep
-    f = interp1d(index, letter.T, kind=interp_kind, assume_sorted=True)
-    norm_letter = f(new_index).T
+    interp = interpolate.interp1d(index, f, kind='linear', assume_sorted=True)
+    norm_f = interp(new_index)
+
+    if plot:
+        plt.figure()
+        plt.plot(x, y, '-k', norm_x, norm_y)
+        plt.legend(['True', 'Interpolation'])
+        plt.title('Spline of parametrically-defined curve')
+        plt.show()
+
+        plt.figure()
+        plt.plot(index, f)
+        plt.plot(new_index, norm_f)
+        plt.legend(['True', 'Interpolation'])
+        plt.title('Interpolation of 1d Force Function')
+        plt.show()
+
+    norm_letter = np.array([norm_x, norm_y, norm_f]).T
     return norm_letter
 
 
@@ -56,7 +83,7 @@ def gen_labels_dict(fname):
     return ind2let
 
 
-def gen_letter_dict(norm_n=None):
+def gen_letter_dict(norm_n=None, letter_lim=None):
     '''
     iterates over data in /data and generates a dict of the result
     :return letters (dict): maps letter to list of np arrays of that letter
@@ -70,7 +97,11 @@ def gen_letter_dict(norm_n=None):
     letters = {letter: [] for letter in ind2label.values()}
     f_names = sorted([fname for fname in os.listdir() if fname[:6] == 'letter'])
     print("Reading in letters")
-    for fname in f_names[:]:
+    # limit the number of letters read in to speed things up
+    if letter_lim is not None:
+        # np.random.shuffle(f_names)
+        f_names = f_names[:letter_lim]
+    for fname in f_names:
         print('   Reading', fname)
         letter = gen_letter(fname, norm_n=norm_n)
         num = extract_f_num(fname)
