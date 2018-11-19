@@ -81,6 +81,10 @@ class RNN:
         loss, acc = self.model.evaluate(test_X, test_Y, verbose=0)
         print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
 
+        incorrects = np.nonzero(model.predict_class(test_X).reshape((-1,)) != test_Y)
+
+        print(incorrects)
+
         # yhat = self.model.predict(test_X, verbose=1)
         # # print(yhat)
         # # test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
