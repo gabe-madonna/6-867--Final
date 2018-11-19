@@ -9,7 +9,8 @@ def main():
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train)
     X_test, y_test = to_matrices(letters_test)
-    # print(X_test[0])
+    X_train = X_train[:, :, :-1]
+    X_test = X_test[:, :, :-1]
     model = RNN()
     model.generate(hidden_size=25, input_shape=X_test[0].shape, output_dim=len(NUM2LET), layers=1)
     model.train(X_train, y_train, epochs=60)
