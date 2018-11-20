@@ -5,7 +5,7 @@ from utils import *
 
 def main():
     # go_home()
-    letters = gen_letter_dict(norm_n=25)
+    letters = gen_letter_dict(norm_n=25, all_letters=False)
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train)
     X_test, y_test = to_matrices(letters_test)
@@ -13,7 +13,7 @@ def main():
     X_test = X_test[:, :, :-1]
     model = RNN()
     model.generate(hidden_size=25, input_shape=X_test[0].shape, output_dim=len(NUM2LET), layers=1)
-    model.train(X_train, y_train, epochs=60)
+    model.train(X_train, y_train, epochs=10)
     model.test(X_test, y_test)
 
 

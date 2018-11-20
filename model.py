@@ -2,6 +2,7 @@ import keras
 from keras.models import Sequential
 from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers import LSTM
+from utils import *
 
 import datetime
 import numpy as np
@@ -81,9 +82,17 @@ class RNN:
         loss, acc = self.model.evaluate(test_X, test_Y, verbose=0)
         print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
 
-        incorrects = np.nonzero(model.predict_class(test_X).reshape((-1,)) != test_Y)
-
-        print(incorrects)
+        y_hat = self.model.predict(test_X)
+        y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
+        incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
+        print(sum(incorrects))
+        nums = np.array([np.argmax(yi) for yi in test_Y])
+        misses = nums[incorrects]
+        unique, counts = np.unique(misses, return_counts=True)
+        unique = [NUM2LET[u+1] for u in unique]
+        miss_dict = dict(zip(unique, counts))
+        print(miss_dict)
+        print('missed {}/{}'.format(len(misses), len(y_hat)))
 
         # yhat = self.model.predict(test_X, verbose=1)
         # # print(yhat)
@@ -104,7 +113,7 @@ class RNN:
             myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
             myfile.write("HYPERPARAMS")
             myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
-        
+        print('nice work, Pramoda')
 
 class CNN:
 

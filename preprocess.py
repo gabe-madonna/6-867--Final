@@ -83,7 +83,7 @@ def gen_labels_dict(fname):
     return ind2let
 
 
-def gen_letter_dict(norm_n=None, letter_lim=None):
+def gen_letter_dict(norm_n=None, letter_lim=None, all_letters=False):
     '''
     iterates over data in /data and generates a dict of the result
     :return letters (dict): maps letter to list of np arrays of that letter
