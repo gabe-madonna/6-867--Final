@@ -6,6 +6,7 @@ from utils import *
 
 import datetime
 import numpy as np
+import json
 
 class RNN:
 
@@ -109,10 +110,12 @@ class RNN:
         # print('Test Accuracy: %.3f' % totalAccuracy)
 
         with open("results.txt", "a") as myfile:
-            myfile.write("-------------------")
+            myfile.write("-------------------\n")
             myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
-            myfile.write("HYPERPARAMS")
+            myfile.write("HYPERPARAMS: ")
             myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
+            myfile.write('Misclassified files: {}\n'.format(miss_dict))
+
         print('nice work, Pramoda')
 
 class CNN:
