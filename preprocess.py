@@ -4,13 +4,17 @@ from scipy import interpolate
 
 
 
-def gen_letter(fname, norm_n=None):
+def gen_letter(fname, norm_n=None, derivative=False, integral=False):
     '''
     generate np array from fname
     :param fname (str): name of file
     :return letter (np.array): n by 3 matrix for letter
     '''
     letter = np.genfromtxt(fname, delimiter=",")
+    if derivative:
+        letter = np.diff(letter)
+    if integral:
+        letter = np.trapz(letter)
     letter = norm(letter, norm_n)
     return letter
 
