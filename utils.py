@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 
 
 HOME = '6-867--Final'
-NUM2LET = {i+1: string.ascii_letters[i] for i in range(20)}
+LETTERS = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
+NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
+LET2NUM = {val: key for key, val in NUM2LET.items()}
+
 
 
 def plot_letter(letter, label=None):

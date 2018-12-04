@@ -2,3 +2,43 @@
 2018-11-04 20:32:59.818784 Test Accuracy: 0.430
 2018-11-04 20:52:34.052555 Test Accuracy: 0.458
 2018-11-04 21:00:14.569135 Test Accuracy: 0.442
+-------------------
+RNN
+2018-11-19 19:15:20.211288
+Testing loss: 0.15505175069469002, acc: 0.9539823008849557
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+-------------------
+RNN
+2018-11-19 19:32:36.366989
+Testing loss: 0.16240400236957106, acc: 0.952212389380531
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+
+-------------------
+RNN
+2018-11-19 19:37:12.108378
+Testing loss: 0.19716318265856367, acc: 0.9433628318584071
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+
+-------------------
+RNN
+2018-11-19 19:38:46.121382
+Testing loss: 0.14043329084308537, acc: 0.9575221238938053
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+Misclassified files: {'h': 7, 'l': 1, 'm': 2, 'n': 10, 'w': 4}
+-------------------
+CNN
+2018-12-03 21:30:42.089799
+Testing loss: 0.19160477760602282, acc: 0.9451327433628318
+HYPERPARAMS: 
+-------------------
+CNN
+2018-12-03 21:37:56.731668
+Testing loss: 0.08032368801661527, acc: 0.9769911504424779
+HYPERPARAMS: Layers: 2, Epochs: 50
+Misclassified files: {'h': 2, 'l': 2, 'm': 2, 'n': 1, 'w': 6}
+-------------------
+RNN
+2018-12-03 21:40:39.512213
+Testing loss: 0.08357667686439334, acc: 0.9805309734513274
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 50
+Misclassified files: {'h': 2, 'm': 2, 'n': 3, 'r': 1, 'w': 3}
