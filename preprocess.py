@@ -2,8 +2,6 @@ import numpy as np
 from utils import *
 from scipy import interpolate
 
-
-
 def gen_letter(fname, norm_n=None, derivative=False, integral=False):
     '''
     generate np array from fname
