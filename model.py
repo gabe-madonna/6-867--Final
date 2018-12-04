@@ -135,10 +135,63 @@ class CNN:
         self.model.add(Conv2D(64, (3, 3), activation='relu'))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Flatten())
-        self.model.add(Dense(1000, activation='relu'))
+        self.model.add(Dense(100, activation='relu'))
         # 20 for number of classes
         self.model.add(Dense(20, activation='softmax'))
+
         return self.model
+
+    def train(self, train_x, train_y, epochs=50):
+        '''
+        train the model
+        :train_x (np.array): inputs (x)
+        :train_y (np.array): outputs (y)
+        '''
+        # train the model
+        # validation_data=(test_x, test_y),
+
+        self.epochs = epochs
+
+        print("===== TRAINING MODEL ======")
+
+        history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
+
+        print("===== FINISHED TRAINING MODEL ======")
+        
+        return history
+
+    def test(self, test_X, test_Y):
+        '''
+        test the model
+        '''
+        # make a prediction
+        print("===== TESTING MODEL ======")
+        loss, acc = self.model.evaluate(test_X, test_Y, verbose=0)
+        print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+
+        # get predicted output for data
+        y_hat = self.model.predict(test_X)
+        y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
+
+        # find which characters were incorrectly classified
+        incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
+        print(sum(incorrects))
+        nums = np.array([np.argmax(yi) for yi in test_Y])
+        misses = nums[incorrects]
+        unique, counts = np.unique(misses, return_counts=True)
+        unique = [NUM2LET[u+1] for u in unique]
+        miss_dict = dict(zip(unique, counts))
+        print(miss_dict)
+        print('missed {}/{}'.format(len(misses), len(y_hat)))
+
+        with open("results.txt", "a") as myfile:
+            myfile.write("-------------------\n")
+            myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+            myfile.write("HYPERPARAMS: ")
+            myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
+            myfile.write('Misclassified files: {}\n'.format(miss_dict))
+
+        print('nice work, Pramoda')
 
 
 if __name__ == '__main__':
