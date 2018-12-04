@@ -111,6 +111,7 @@ class RNN:
 
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
+            myfile.write("RNN\n")
             myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
             myfile.write("HYPERPARAMS: ")
             myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
@@ -125,6 +126,8 @@ class CNN:
         initialize the Sequential Model
         '''
         self.model = Sequential()
+        self.layers = 2
+        self.epochs = 0
 
     def generate(self, input_shape):
         '''
@@ -133,11 +136,13 @@ class CNN:
         self.model.add(Conv2D(32, kernel_size=(3, 3), strides=2, activation='relu', input_shape=input_shape, padding='same'))
         # self.model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
         self.model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+
         # self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Flatten())
         self.model.add(Dense(100, activation='relu'))
         # 20 for number of classes
         self.model.add(Dense(20, activation='softmax'))
+        self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         return self.model
 
@@ -154,8 +159,6 @@ class CNN:
 
         print("===== TRAINING MODEL ======")
 
-        train_x = np.reshape(train_x, (train_x.shape[0], train_x.shape[1], 1))
-
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
 
         print("===== FINISHED TRAINING MODEL ======")
@@ -170,8 +173,6 @@ class CNN:
         print("===== TESTING MODEL ======")
         loss, acc = self.model.evaluate(test_X, test_Y, verbose=0)
         print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
-
-        test_X = np.reshape(test_X, (test_X.shape[0], test_X.shape[1], 1))
 
         # get predicted output for data
         y_hat = self.model.predict(test_X)
@@ -190,9 +191,10 @@ class CNN:
 
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
+            myfile.write("CNN\n")
             myfile.write(str(datetime.datetime.now()) + '\nTesting loss: {}, acc: {}\n'.format(loss, acc))
             myfile.write("HYPERPARAMS: ")
-            myfile.write('Layers: {}, Hidden Size: {}, Output Dim: {}, Epochs: {}\n'.format(self.layers, self.hidden_size, self.output_dim, self.epochs))
+            myfile.write('Layers: {}, Epochs: {}\n'.format(self.layers, self.epochs))
             myfile.write('Misclassified files: {}\n'.format(miss_dict))
 
         print('nice work, Pramoda')
