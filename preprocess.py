@@ -1,7 +1,6 @@
 import numpy as np
 from utils import *
-from scipy import interpolate
-
+from scipy import interpolate, ndimage
 
 
 def gen_letter(fname, norm_n=None, derivative=False, integral=False):
@@ -11,10 +10,10 @@ def gen_letter(fname, norm_n=None, derivative=False, integral=False):
     :return letter (np.array): n by 3 matrix for letter
     '''
     letter = np.genfromtxt(fname, delimiter=",")
-    if derivative:
-        letter = np.diff(letter)
-    if integral:
-        letter = np.trapz(letter)
+    # if derivative:
+    #     letter = np.diff(letter, axis=0)
+    # if integral:
+    #     letter = np.trapz(letter, axis=0)
     letter = norm(letter, norm_n)
     return letter
 
@@ -34,7 +33,13 @@ def norm(letter, n=25, plot=False):
     safe_inds = np.where(np.abs(np.diff(x)) + np.abs(np.diff(y)) > 0)
     x2 = np.r_[x[safe_inds], x[-1]]
     y2 = np.r_[y[safe_inds], y[-1]]
-    tck, u = interpolate.splprep(np.array([x2, y2]), s=.01)
+    jump = np.sqrt(np.diff(x2) ** 2 + np.diff(y2) ** 2)
+    smooth_jump = ndimage.gaussian_filter1d(jump, 5, mode='wrap')  # window of size 5 is arbitrary
+    limit = 2 * np.median(smooth_jump)  # factor 2 is arbitrary
+    x3, y3 = x2[:-1], y2[:-1]
+    x4 = x3[(jump > 0) & (smooth_jump < limit)]
+    y4 = y3[(jump > 0) & (smooth_jump < limit)]
+    tck, u = interpolate.splprep(np.array([x4, y4]), s=.01)
     unew = np.linspace(0, 1, n)
     norm_x, norm_y = interpolate.splev(unew, tck)
 
@@ -87,7 +92,7 @@ def gen_labels_dict(fname):
     return ind2let
 
 
-def gen_letter_dict(norm_n=None, letter_lim=None, all_letters=False):
+def gen_letter_dict(norm_n=None, all_letters=True, deriv=False, integ=False):
     '''
     iterates over data in /data and generates a dict of the result
     :return letters (dict): maps letter to list of np arrays of that letter
@@ -102,12 +107,13 @@ def gen_letter_dict(norm_n=None, letter_lim=None, all_letters=False):
     f_names = sorted([fname for fname in os.listdir() if fname[:6] == 'letter'])
     print("Reading in letters")
     # limit the number of letters read in to speed things up
-    if letter_lim is not None:
-        # np.random.shuffle(f_names)
-        f_names = f_names[:letter_lim]
+    if not all_letters:
+        np.random.shuffle(f_names)
+        f_names = f_names[:20]
+    # read in each letter
     for fname in f_names:
         print('   Reading', fname)
-        letter = gen_letter(fname, norm_n=norm_n)
+        letter = gen_letter(fname, norm_n, deriv, integ)
         num = extract_f_num(fname)
         label = ind2label[num]
         letters[label].append(letter)

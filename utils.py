@@ -1,6 +1,7 @@
 import os
-import string
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
 
 
 HOME = '6-867--Final'
@@ -9,18 +10,40 @@ NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
 LET2NUM = {val: key for key, val in NUM2LET.items()}
 
 
-
-def plot_letter(letter, label=None):
+def plot_letter(letter, label=None, box=True):
     '''
     plot a given letter
     :param letter (np.2darray): letter array
     :param label (str): letter type
     :return None:
     '''
+    # fetch columns
     x, y, f = letter.T
-    plt.plot(x, y)
+    # make figure
+    fig, ax = plt.subplots(1)
+
+    # generate box
+    if box:
+        # get boundaries
+        x0, x1 = min(x), max(x)
+        y0, y1 = min(y), max(y)
+        # setting buffer
+        b = .05
+        buffer = b * max(x1 - x0, y1 - y0)
+        # make rectangle args
+        xy = (x0-buffer, y0-buffer)
+        dx = (x1 - x0) + 2 * buffer
+        dy = (y1 - y0) + 2 * buffer
+        # add box to plot
+        pc = PatchCollection([Rectangle(xy, dx, dy)], facecolor='None', edgecolor='r')
+        ax.add_collection(pc)
+
+    # label graph
     if label is not None:
         plt.title(label)
+
+    # plot letter and show
+    plt.plot(x, y)
     plt.show()
 
 

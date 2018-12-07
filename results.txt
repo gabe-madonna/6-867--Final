@@ -8,3 +8,12 @@ HYPERPARAMSLayers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
 -------------------2018-11-19 19:32:36.366989
 Testing loss: 0.16240400236957106, acc: 0.952212389380531
 HYPERPARAMSLayers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+-------------------2018-11-19 20:07:25.979693
+Testing loss: 0.47793580544205894, acc: 0.8442477876106195
+HYPERPARAMSLayers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 10
+-------------------2018-11-19 20:10:45.737483
+Testing loss: 0.09055442172720765, acc: 0.9699115044247788
+HYPERPARAMSLayers: 1, Hidden Size: 25, Output Dim: 20, Epochs: 100
+-------------------2018-11-19 20:15:25.524401
+Testing loss: 0.09713561799118617, acc: 0.9769911504424779
+HYPERPARAMSLayers: 3, Hidden Size: 10, Output Dim: 20, Epochs: 100
