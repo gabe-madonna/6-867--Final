@@ -13,8 +13,9 @@ LET2NUM = {val: key for key, val in NUM2LET.items()}
 def plot_letter(letter, label=None, box=True):
     '''
     plot a given letter
-    :param letter (np.2darray): letter array
-    :param label (str): letter type
+    :param letter: letter array
+    :param label: letter type
+    :param box: (bool) whether to print a box
     :return None:
     '''
     # fetch columns

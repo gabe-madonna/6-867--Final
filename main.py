@@ -3,6 +3,7 @@ from preprocess import gen_letter_dict, partition, to_matrices
 from utils import *
 import numpy as np
 
+
 def main():
     # go_home()
     letters = gen_letter_dict(norm_n=25, all_letters=False, deriv=False, integ=False)
@@ -18,12 +19,14 @@ def main():
     # test cnn
     # test_cnn(X_train, y_train, X_test, y_test, 50)
 
+
 def test_rnn(X_train, y_train, X_test, y_test, epochs):
     # test RNN
     model = RNN()
     model.generate(hidden_size=25, input_shape=X_test[0].shape, output_dim=len(NUM2LET), layers=1)
     model.train(X_train, y_train, epochs=epochs)
     model.test(X_test, y_test)
+
 
 def test_cnn(X_train, y_train, X_test, y_test, epochs):
     # test CNN
@@ -35,7 +38,6 @@ def test_cnn(X_train, y_train, X_test, y_test, epochs):
     model.generate(input_shape=X_test[0].shape)
     model.train(X_train, y_train, epochs=epochs)
     model.test(X_test, y_test)
-
 
 
 def debug():
