@@ -56,8 +56,7 @@ def debug():
 
 
 if __name__ == '__main__':
-    # main()
-    pass
+    main()
+    # pass
 
 # debug()
-main()
