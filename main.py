@@ -26,7 +26,7 @@ def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     # test RNN
     NUM2LET = {value: key for (key, value) in y_map.items()}
     model = RNN()
-    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=1)
+    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=3)
     model.train(X_train, y_train, epochs=epochs)
     model.test(X_test, y_test)
 
@@ -51,7 +51,6 @@ def test_template(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     model.test(X_test, y_test)
 
 
-
 def debug():
     print('debugging')
     letters = gen_letter_dict(dataset=2, norm_n=15, all_letters=True, deriv=False, integ=False)
@@ -59,8 +58,7 @@ def debug():
 
 
 if __name__ == '__main__':
-    # main()
-    pass
+    main()
+    # pass
 
 # debug()
-main()
