@@ -2,7 +2,7 @@ import numpy as np
 from utils import *
 from scipy import interpolate, ndimage
 from keras.utils import to_categorical
-
+import string
 
 
 def gen_letter(fname, dataset, norm_n=None, derivative=False, integral=False):
@@ -16,15 +16,19 @@ def gen_letter(fname, dataset, norm_n=None, derivative=False, integral=False):
     elif dataset == 2:
         strokes = []
         strokei = 0
-        # fname = fname[:-5]
+        fname = fname[:-38] + '{}' + fname[-37:]
         while True:
             try:
-                stroke = np.genfromtxt(fname+str(strokei)+'.txt', delimiter=",")
+                stroke = np.genfromtxt(fname.format(strokei), delimiter=",")
                 strokes.append(stroke)
                 strokei += 1
             except:
                 break
-        letter = np.concatenate(strokes)
+        try:
+            letter = np.concatenate(strokes)
+        except:
+            print('couldnt concatenate', fname)
+            return None
 
     # if derivative:
     #     letter = np.diff(letter, axis=0)
@@ -155,7 +159,7 @@ def gen_letter_dict(dataset, norm_n=None, all_letters=True, deriv=False, integ=F
         letters = {}
         data_dir = 'data2'
         os.chdir(data_dir)
-        f_names = set([fname[:-5] for fname in os.listdir()])  # get first strokes
+        f_names = set([fname for fname in os.listdir()])  # get first strokes
         print("Reading in letters")
 
         for fnamei, fname in enumerate(f_names):
@@ -171,14 +175,14 @@ def gen_letter_dict(dataset, norm_n=None, all_letters=True, deriv=False, integ=F
             if letter is not None:
                 letters.setdefault(label, []).append(letter)
             else:
-                print('   Couldnt read', fname)
+                print('   Couldnt read', fname[:-37])
         os.chdir('..')
         print("Done reading letters")
     else:
         raise ValueError('dataset passed: ' + str(dataset))
 
-    labels = set(letters.keys())
-    y_map = {labels.pop():i for i in range(len(labels))}
+    labels = sorted(letters.keys())
+    y_map = {labels[i]: i for i in range(len(labels))}
     return letters, y_map
 
 
