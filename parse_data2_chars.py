@@ -72,6 +72,7 @@ def write_letters(letter_dict):
 
 
 if __name__ == '__main__':
-    letter_dict = read_letters()
-    os.chdir('data2')
-    write_letters(letter_dict)
+    # letter_dict = read_letters()
+    # os.chdir('data2')
+    # write_letters(letter_dict)
+    pass

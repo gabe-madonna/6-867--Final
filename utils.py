@@ -19,7 +19,7 @@ def plot_letter(letter, label=None, box=True):
     :return None:
     '''
     # fetch columns
-    x, y, f = letter.T
+    x, y = letter.T[:2]
     # make figure
     fig, ax = plt.subplots(1)
 
