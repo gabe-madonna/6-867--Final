@@ -20,8 +20,9 @@ class RNN:
         self.hidden_size = 50
         self.input_shape = (50, 3)
         self.epochs = 50
+        self.NUM2LET = {}
 
-    def generate(self, hidden_size=50, output_dim=20, input_shape=(50,3), layers=1):
+    def generate(self, NUM2LET, hidden_size=50, output_dim=20, input_shape=(50,3), layers=1):
         '''
         generate RNN defined
         :hidden_size (int): number of units in each hidden layer (LSTM)
@@ -30,7 +31,7 @@ class RNN:
         :output_dim (int): number of dimensions in the output i.e. number of classes
         :layers (int): number of layers
         '''
-
+        self.NUM2LET = NUM2LET
         print("===== BUILDING MODEL ======")
 
         # 50 for number of timesteps, 3 for features
@@ -90,7 +91,7 @@ class RNN:
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         unique, counts = np.unique(misses, return_counts=True)
-        unique = [NUM2LET[u+1] for u in unique]
+        unique = [self.NUM2LET[u] for u in unique]
         miss_dict = dict(zip(unique, counts))
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
@@ -186,7 +187,7 @@ class CNN:
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         unique, counts = np.unique(misses, return_counts=True)
-        unique = [NUM2LET[u+1] for u in unique]
+        unique = [self.NUM2LET[u+1] for u in unique]
         miss_dict = dict(zip(unique, counts))
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
