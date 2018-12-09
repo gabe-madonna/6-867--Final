@@ -95,19 +95,21 @@ class RNN:
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
 
-        # yhat = self.model.predict(test_X, verbose=1)
-        # # print(yhat)
-        # # test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-        # # calculate RMSE
-        # totalAccuracy = 0.0
-        # for i in range(len(test_Y)):
-        #     if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
-        #         totalAccuracy += 1
-        # totalAccuracy/= len(test_Y)
+        yhat = self.model.predict(test_X, verbose=1)
+        # print(yhat)
+        # test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
+        # calculate RMSE
+        totalAccuracy = 0.0
+        for i in range(len(test_Y)):
+            if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
+                totalAccuracy += 1
+        totalAccuracy/= len(test_Y)
 
-        # print("===== FINISHED TESTING MODEL ======")
+        print("===== FINISHED TESTING MODEL ======")
 
-        # print('Test Accuracy: %.3f' % totalAccuracy)
+        print('Test Accuracy: %.3f' % totalAccuracy)
+
+        return totalAccuracy
 
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
@@ -188,6 +190,13 @@ class CNN:
         miss_dict = dict(zip(unique, counts))
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
+        
+        totalAccuracy = 0.0
+        for i in range(len(test_Y)):
+            if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
+                totalAccuracy += 1
+        totalAccuracy/= len(test_Y)
+        return totalAccuracy
 
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
