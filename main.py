@@ -13,15 +13,24 @@ def main():
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train, y_map)
     X_test, y_test = to_matrices(letters_test, y_map)
-    # X_train = X_train[:, :, :-1]
-    # X_test = X_test[:, :, :-1]
-
     # # test rnn
     test_rnn(X_train, y_train, X_test, y_test, 250, n_labels, y_map)
-
     # test cnn
     # test_cnn(X_train, y_train, X_test, y_test, 50)
+#
 
+# def main(rnn=True, epochs=50):
+#     # go_home()
+#     letters = gen_letter_dict(norm_n=25, all_letters=False, deriv=False, integ=False)
+#     letters_train, letters_test = partition(letters, ratio=.2)
+#     X_train, y_train = to_matrices(letters_train)
+#     X_test, y_test = to_matrices(letters_test)
+#     X_train = X_train[:, :, :-1]
+#     X_test = X_test[:, :, :-1]
+#     if rnn:
+#         return test_rnn(X_train, y_train, X_test, y_test, epochs)     # test rnn
+#     else:
+#         return test_cnn(X_train, y_train, X_test, y_test, epochs)    # test cnn
 
 def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     # test RNN
@@ -29,7 +38,8 @@ def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     model = RNN()
     model.generate(NUM2LET=NUM2LET, hidden_size=50, input_shape=X_test[0].shape, output_dim=n_labels, layers=1)
     model.train(X_train, y_train, epochs=epochs)
-    model.test(X_test, y_test)
+    acc = model.test(X_test, y_test)
+    return acc
 
 
 def test_cnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
@@ -41,7 +51,8 @@ def test_cnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     model = CNN()
     model.generate(input_shape=X_test[0].shape)
     model.train(X_train, y_train, epochs=epochs)
-    model.test(X_test, y_test)
+    acc = model.test(X_test, y_test)
+    return acc
 
 
 def test_template(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
@@ -50,7 +61,6 @@ def test_template(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=2)
     model.train(X_train, y_train, epochs=epochs)
     model.test(X_test, y_test)
-
 
 
 def debug():
