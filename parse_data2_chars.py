@@ -83,7 +83,80 @@ def extract_letters():
 #     print('Done Writing')
 
 
+def normalize_means():
+    fnames = set([fname[:-38]+'{}'+fname[-37:] for fname in os.listdir()])  # get first strokes
+    for i, fname in enumerate(fnames):
+        if i % 1000 == 0:
+            print('reading file {}'.format(i))
+        strokes = []
+        strokei = 0
+        while True:
+            try:
+                stroke = np.genfromtxt(fname.format(strokei), delimiter=",")
+                strokes.append(stroke)
+                strokei += 1
+            except:
+                break
+        try:
+            letter = np.concatenate(strokes)
+            x_bar = np.mean(letter[:, 0])
+            y_bar = np.mean(letter[:, 1])
+            for strokei, stroke in enumerate(strokes):
+                stroke[:, 0] -= x_bar
+                stroke[:, 1] -= y_bar
+                np.savetxt(fname.format(strokei), stroke, delimiter=",")
+        except:
+            pass
+
+
+def get_std_mean():
+    x, y = [], []
+    fnames = os.listdir()
+    for i, fname in enumerate(fnames):
+        if i % 1000 == 0:
+            print('reading file {}'.format(i))
+        stroke = np.genfromtxt(fname, delimiter=",")
+        x.append(stroke[:, 0])
+        y.append(stroke[:, 1])
+    x, y = np.concatenate(x), np.concatenate(y)
+    sigma = np.std(np.concatenate((x, y)))
+    x_bar, y_bar = np.mean(x), np.mean(y)
+    return sigma, x_bar, y_bar
+
+
+def normalize_std(sigma):
+    fnames = os.listdir()
+    for i, fname in enumerate(fnames):
+        if i % 1000 == 0:
+            print('reading file {}'.format(i))
+        stroke = np.genfromtxt(fname, delimiter=",")
+        stroke /= sigma
+        np.savetxt(fname, stroke, delimiter=",")
+
+
+def normalize_letters():
+
+    print('normalizing means')
+    normalize_means()
+
+    print('getting values')
+    sigma, x_avg, y_avg = get_std_mean()
+
+    print('normalizing std')
+    normalize_std(sigma)
+
+    print('checking values')
+    sigma, x_avg, y_avg = get_std_mean()
+    assert abs(sigma - 1) < .001
+    assert abs(x_avg) < .001
+    assert abs(y_avg) < .001
+    print('done')
+
+
 if __name__ == '__main__':
-    letter_dict = extract_letters()
+    # letter_dict = extract_letters()
     # write_letters(letter_dict)
+    os.chdir('data2')
+    normalize_letters()
+    os.chdir('..')
     pass

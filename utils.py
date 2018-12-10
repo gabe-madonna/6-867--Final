@@ -2,50 +2,73 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
-
+from numpy import ndarray
+import string
 
 HOME = '6-867--Final'
-LETTERS = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
-NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
-LET2NUM = {val: key for key, val in NUM2LET.items()}
+# LETTERS = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
+# NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
+# LETTERS = string.ascii_letters
+# NUM2LET = {i: letter for i, letter in enumerate(LETTERS)}
+# LET2NUM = {val: key for key, val in NUM2LET.items()}
 
 
-def plot_letter(letter, label=None, box=True):
+def get_bounding_box(x, y):
+    # get boundaries
+    x0, x1 = min(x), max(x)
+    y0, y1 = min(y), max(y)
+    # setting buffer
+    b = .05
+    buffer = b * max(x1 - x0, y1 - y0)
+    # make rectangle args
+    xy = (x0 - buffer, y0 - buffer)
+    dx = (x1 - x0) + 2 * buffer
+    dy = (y1 - y0) + 2 * buffer
+    # add box to plot
+    return Rectangle(xy, dx, dy)
+
+
+def plot_letters(letters, label='', box=False, ax=None):
     '''
     plot a given letter
-    :param letter: letter array
+    :param letters: list of letter arrays or one letter array
     :param label: letter type
     :param box: (bool) whether to print a box
     :return None:
     '''
-    # fetch columns
-    x, y = letter.T[:2]
-    # make figure
-    fig, ax = plt.subplots(1)
 
-    # generate box
-    if box:
-        # get boundaries
-        x0, x1 = min(x), max(x)
-        y0, y1 = min(y), max(y)
-        # setting buffer
-        b = .05
-        buffer = b * max(x1 - x0, y1 - y0)
-        # make rectangle args
-        xy = (x0-buffer, y0-buffer)
-        dx = (x1 - x0) + 2 * buffer
-        dy = (y1 - y0) + 2 * buffer
-        # add box to plot
-        pc = PatchCollection([Rectangle(xy, dx, dy)], facecolor='None', edgecolor='r')
-        ax.add_collection(pc)
+    if type(letters) == list:
+        fig, ax = plt.subplots(1)
+        for letter in letters:
+            plot_letters(letter, box=box, ax=ax)
 
-    # label graph
-    if label is not None:
         plt.title(label)
+        plt.show()
+    else:
+        assert type(letters) == ndarray
+        assert ax is not None
+        letter = letters
+        # fetch columns
+        x, y = letter.T[:2]
+        # make figure
 
-    # plot letter and show
-    plt.plot(x, y)
-    plt.show()
+        # generate box
+        if box:
+            # get boundaries
+            x0, x1 = min(x), max(x)
+            y0, y1 = min(y), max(y)
+            # setting buffer
+            b = .05
+            buffer = b * max(x1 - x0, y1 - y0)
+            # make rectangle args
+            xy = (x0-buffer, y0-buffer)
+            dx = (x1 - x0) + 2 * buffer
+            dy = (y1 - y0) + 2 * buffer
+            # add box to plot
+            pc = PatchCollection([Rectangle(xy, dx, dy)], facecolor='None', edgecolor='r')
+            ax.add_collection(pc)
+        # plot letter
+        plt.plot(x, y)
 
 
 def assert_home():

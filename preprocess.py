@@ -16,7 +16,6 @@ def gen_letter(fname, dataset, norm_n=None, derivative=False, integral=False):
     elif dataset == 2:
         strokes = []
         strokei = 0
-        fname = fname[:-38] + '{}' + fname[-37:]
         while True:
             try:
                 stroke = np.genfromtxt(fname.format(strokei), delimiter=",")
@@ -159,7 +158,8 @@ def gen_letter_dict(dataset, norm_n=None, all_letters=True, deriv=False, integ=F
         letters = {}
         data_dir = 'data2'
         os.chdir(data_dir)
-        f_names = set([fname for fname in os.listdir()])  # get first strokes
+
+        f_names = set([fname[:-38]+'{}'+fname[-37:] for fname in os.listdir()])  # get first strokes
         print("Reading in letters")
 
         for fnamei, fname in enumerate(f_names):
@@ -172,10 +172,11 @@ def gen_letter_dict(dataset, norm_n=None, all_letters=True, deriv=False, integ=F
             if filterr is not None and label not in filterr:
                 continue
             letter = gen_letter(fname, dataset, norm_n, deriv, integ)
+
             if letter is not None:
                 letters.setdefault(label, []).append(letter)
             else:
-                print('   Couldnt read', fname[:-37])
+                print('   Couldnt read', fname[:-40])
         os.chdir('..')
         print("Done reading letters")
     else:

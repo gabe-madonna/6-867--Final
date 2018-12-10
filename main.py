@@ -6,8 +6,10 @@ import string
 
 
 def main():
+    filt = set(string.ascii_letters)
+    # filt = {'a', 'A', 'F', 'f', 'C', 'c'}
     letters, y_map = gen_letter_dict(dataset=2, norm_n=15, all_letters=True,
-            deriv=False, integ=False, filterr=set(string.ascii_letters))
+            deriv=False, integ=False, filterr=filt)
     # letters, y_map = gen_letter_dict(dataset=2, norm_n=25, all_letters=True, deriv=False, integ=False, filterr=set(string.ascii_letters))
 
     n_labels = len(y_map)
@@ -22,7 +24,7 @@ def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     # test RNN
     NUM2LET = {value: key for (key, value) in y_map.items()}
     model = RNN()
-    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=1)
+    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=2)
     model.train(X_train, y_train, epochs=epochs)
     acc = model.test(X_test, y_test)
     return acc
