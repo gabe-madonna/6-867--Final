@@ -1,20 +1,37 @@
-from model import RNN, CNN
+from model import RNN, CNN, kNN
 from preprocess import gen_letter_dict, partition, to_matrices, y_encode
 from utils import *
+from sklearn import metrics
 import numpy as np
 import string
 
 
 def main():
     # letters, y_map = gen_letter_dict(dataset=2, norm_n=20, all_letters=True, deriv=False, integ=False, filterr=None)
-    letters, y_map = gen_letter_dict(dataset=2, norm_n=25, all_letters=True, deriv=False, integ=False, filterr=set(string.ascii_letters))
+    letters, y_map = gen_letter_dict(dataset=1, norm_n=25, all_letters=True, deriv=False, integ=False, filterr=set(string.ascii_letters))
 
     n_labels = len(y_map)
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train, y_map)
     X_test, y_test = to_matrices(letters_test, y_map)
     # # test rnn
-    test_rnn(X_train, y_train, X_test, y_test, 250, n_labels, y_map)
+    # test_rnn(X_train, y_train, X_test, y_test, 50, n_labels, y_map)
+    # test knn
+    knnX_train = []
+    knnX_test = []
+    for elem in X_train: 
+        newArr = [point[1] for point in elem]
+        newArr.extend([point[0] for point in elem])
+        knnX_train.append(newArr)
+    for elem in X_test:
+        newArr = [point[1] for point in elem]
+        newArr.extend([point[0] for point in elem])
+        knnX_test.append(newArr)
+    knn = kNN(8)
+    knn.train(knnX_train, y_train)
+    y_pred = knn.modelPredict(knnX_test)
+    print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
+
     # test cnn
     # test_cnn(X_train, y_train, X_test, y_test, 50)
 #

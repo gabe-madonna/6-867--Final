@@ -2,11 +2,12 @@ import keras
 from keras.models import Sequential
 from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten
 from keras.layers import LSTM
+from sklearn.neighbors import KNeighborsClassifier
 from utils import *
-
 import datetime
 import numpy as np
 import json
+import pickle
 
 class RNN:
 
@@ -72,7 +73,7 @@ class RNN:
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
 
         print("===== FINISHED TRAINING MODEL ======")
-        
+        pickle.dump(self.model, open("model.p", "wb"))
         return history
 
     def test(self, test_X, test_Y):
@@ -209,6 +210,20 @@ class CNN:
 
         print('nice work, Pramoda')
 
+class kNN():
+
+    def __init__(self, numNeighbors):
+        self.numNeighbors = numNeighbors
+        self.model = KNeighborsClassifier(n_neighbors=self.numNeighbors)
+
+    def train(self, train_X, train_Y):
+        self.model.fit(train_X, train_Y)
+
+    def getScore(self, test_X, test_Y):
+        return self.model.score(test_X, test_Y)
+
+    def modelPredict(self, test_X):
+        return self.model.predict(test_X)
 
 if __name__ == '__main__':
     
