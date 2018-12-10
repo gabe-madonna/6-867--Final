@@ -291,7 +291,66 @@ class KNN():
         print('missed {}/{}'.format(len(misses), len(y_hat)))
         return accuracy, error_dict
 
+class Template():
+    def __init__(self):
+        self.letters = []
+        self.averages = []
+        self.averages_dict = []
+        self.miss_dict = {}
 
+    def average_letters(self, letters_train):
+        '''
+        generate average matrices for each letter
+        :param letters (dict): dictionary of letter to list of matrices
+        :return keys, avgs, averages: letters, averages, and average dict
+        '''
+        averages = {}
+        keys, avgs = [], []
+
+        for letter in letters_train:
+            samples = letters_train[letter]
+            avg = np.mean(samples, axis=0)
+            averages[letter] = avg
+            keys.append(letter)
+            avgs.append(avg)
+
+        self.letters = keys
+        self.averages = avgs
+        self.averages_dict = averages
+        
+        return keys, avgs, averages
+
+    def find_closest(self, sample, distance_metric):
+        '''
+        find the index of the closest matrix using distance_metric
+        :param sample (np.array): number of the dataset
+        '''
+        dist = []
+        for avg in self.averages:
+            dist.append(np.average(cdist(sample, avg, metric=distance_metric)))
+
+        ind = np.argmin(dist)
+
+        return ind, dist
+
+    def test_letters(self, test_X, test_y, num2let, distance_metric):
+        predicted = []
+        accuracy = 0
+        for index, x in enumerate(test_X):
+            ind, dist = self.find_closest(x, distance_metric)
+            correct_ind = np.argmax(y_test[index])
+            predicted.append((self.letters[ind], num2let[correct_ind]))
+            if self.letters[ind] == num2let[correct_ind]:
+                accuracy +=1
+            else:
+                if num2let[correct_ind] in self.miss_dict:
+                    self.miss_dict[num2let[correct_ind]] +=1
+                else:
+                    self.miss_dict[num2let[correct_ind]] = 1
+
+        accuracy /= len(test_y)
+
+        return predicted, accuracy, self.miss_dict
 
 
 if __name__ == '__main__':
