@@ -7,16 +7,12 @@ import string
 
 def main():
     filt = set(string.ascii_letters)
-    # filt = {'a', 'A', 'F', 'f', 'C', 'c'}
-    letters, y_map = gen_letter_dict(dataset=2, norm_n=15, all_letters=True,
-            deriv=False, integ=False, filterr=filt)
-    # letters, y_map = gen_letter_dict(dataset=2, norm_n=25, all_letters=True, deriv=False, integ=False, filterr=set(string.ascii_letters))
-
+    letters, y_map = gen_letter_dict(dataset=2, norm_n=15, all_letters=True, filterr=filt)
     n_labels = len(y_map)
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train, y_map)
     X_test, y_test = to_matrices(letters_test, y_map)
-    test_rnn(X_train, y_train, X_test, y_test, 250, n_labels, y_map)
+    test_rnn(X_train, y_train, X_test, y_test, 125, n_labels, y_map)
     # test_cnn(X_train, y_train, X_test, y_test, 50)
 
 
@@ -54,7 +50,7 @@ def test_template(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
 def debug():
     print('debugging')
     letters = gen_letter_dict(dataset=2, norm_n=15, all_letters=True, deriv=False, integ=False)
-    plot_letter(letters['a'][0])
+    plot_letters([letters['a'][0]])
 
 
 if __name__ == '__main__':

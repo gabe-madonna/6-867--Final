@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
-from numpy import ndarray
+from numpy import ndarray, mean, arange
 import string
 
 HOME = '6-867--Final'
@@ -28,7 +28,7 @@ def get_bounding_box(x, y):
     return Rectangle(xy, dx, dy)
 
 
-def plot_letters(letters, label='', box=False, ax=None):
+def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False):
     '''
     plot a given letter
     :param letters: list of letter arrays or one letter array
@@ -40,9 +40,15 @@ def plot_letters(letters, label='', box=False, ax=None):
     if type(letters) == list:
         fig, ax = plt.subplots(1)
         for letter in letters:
-            plot_letters(letter, box=box, ax=ax)
+            plot_letters(letter, box=box, ax=ax, alpha=alpha, plot_avg=plot_avg)
 
-        plt.title(label)
+        if plot_avg:
+            letter_avg = mean(letters, axis=0)
+            x, y = letter_avg.T[:2]
+            plt.plot(x, y, alpha=1, c='k')
+
+        title = 'Samples of {}{}'.format(label, ' With Average' if plot_avg else '')
+        plt.figtext(.5, .9, title, fontsize=18, ha='center')
         plt.show()
     else:
         assert type(letters) == ndarray
@@ -68,7 +74,33 @@ def plot_letters(letters, label='', box=False, ax=None):
             pc = PatchCollection([Rectangle(xy, dx, dy)], facecolor='None', edgecolor='r')
             ax.add_collection(pc)
         # plot letter
-        plt.plot(x, y)
+        plt.plot(x, y, alpha=alpha, c='b')
+
+
+def graph_error_rates(model, error_dict, subtitle='', num_letters=None, best=True):
+    '''
+    :param model: (str) the model used
+    :param subtitle: (str) subtitle
+    :param error_dict: map characters to error rate
+    :param num_letters: number of bars to graph
+    :param best: True: graph num_letters most accurate letters, otherwise
+        graph num_letters least accurate letters
+    :return:
+    '''
+    if num_letters is None:
+        num_letters = len(error_dict)
+    to_plot = sorted(list(error_dict.keys()),
+                     key=lambda k: error_dict[k], reverse=not best)[:num_letters]
+    y_pos = arange(len(to_plot))
+    performance = [error_dict[letter] for letter in to_plot]
+    plt.bar(y_pos, performance, align='center', alpha=0.5, color='green' if best else 'red')
+    plt.xticks(y_pos, to_plot)
+    plt.ylabel('Error')
+    plt.xlabel('Letter')
+    title = '{} Error - Top {} {} Letters'.format(model, num_letters, 'Best' if best else 'Worst')
+    plt.figtext(.5, .9, title, fontsize=18, ha='center')
+    plt.figtext(.5, .85, subtitle, fontsize=10, ha='center')
+    plt.show()
 
 
 def assert_home():
@@ -139,3 +171,5 @@ def mask_list(letters, mask, inverse=False):
         mask = [not bool(mask[i]) for i in range(len(mask))]
     masked_list = [letters[i] for i in range(len(mask)) if mask[i]]
     return masked_list
+
+# print('debug')

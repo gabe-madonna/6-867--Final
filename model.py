@@ -110,8 +110,6 @@ class RNN:
 
         print('Test Accuracy: %.3f' % totalAccuracy)
 
-        return totalAccuracy
-
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
             myfile.write("RNN\n")
@@ -121,6 +119,9 @@ class RNN:
             myfile.write('Misclassified files: {}\n'.format(miss_dict))
 
         print('nice work, Pramoda')
+
+        return totalAccuracy
+
 
 class CNN:
 
@@ -198,7 +199,6 @@ class CNN:
             if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
                 totalAccuracy += 1
         totalAccuracy /= len(test_Y)
-        return totalAccuracy
 
         with open("results.txt", "a") as myfile:
             myfile.write("-------------------\n")
@@ -209,6 +209,9 @@ class CNN:
             myfile.write('Misclassified files: {}\n'.format(miss_dict))
 
         print('nice work, Pramoda')
+
+        return totalAccuracy
+
 
 
 if __name__ == '__main__':
