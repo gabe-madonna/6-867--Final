@@ -1,6 +1,6 @@
 import keras
 from keras.models import Sequential
-from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten
+from keras.layers import Activation, Dense, Conv2D, MaxPooling2D, Dropout, Flatten, Bidirectional
 from keras.layers import LSTM
 from sklearn.neighbors import KNeighborsClassifier
 from utils import *
@@ -37,7 +37,7 @@ class RNN:
 
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
-            self.model.add(LSTM(hidden_size, input_shape=input_shape, return_sequences=True))
+            self.model.add(Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)))
         # flatten output befor elast dense later
         self.model.add(Flatten())
         # dense takes in output dimensionality
@@ -48,7 +48,7 @@ class RNN:
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("===== FINISHED BUILDING MODEL ======")
-        print(self.model)
+        # print(self.model.summary())
 
         self.layers = layers
         self.output_dim = output_dim
@@ -140,6 +140,7 @@ class CNN:
         self.model.add(Conv2D(32, kernel_size=(3, 3), strides=2, activation='relu', input_shape=input_shape, padding='same'))
         # self.model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
         self.model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+        self.model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
 
         # self.model.add(MaxPooling2D(pool_size=(2, 2)))
         self.model.add(Flatten())
@@ -188,7 +189,7 @@ class CNN:
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         unique, counts = np.unique(misses, return_counts=True)
-        unique = [self.NUM2LET[u+1] for u in unique]
+        unique = [self.NUM2LET[u] for u in unique]
         miss_dict = dict(zip(unique, counts))
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
@@ -197,7 +198,7 @@ class CNN:
         for i in range(len(test_Y)):
             if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
                 totalAccuracy += 1
-        totalAccuracy/= len(test_Y)
+        totalAccuracy /= len(test_Y)
         return totalAccuracy
 
         with open("results.txt", "a") as myfile:
