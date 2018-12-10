@@ -228,7 +228,6 @@ def y_encode(y, y_map):
     return y_final
 
 
-
 # def y_encode(y):
 #     '''
 #     one-hot encode multi-class label data

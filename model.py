@@ -41,9 +41,12 @@ class RNN:
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
             self.model.add(LSTM(hidden_size, input_shape=input_shape, return_sequences=True))
+<<<<<<< HEAD
+=======
         # flatten output befor elast dense later
         # for i in range(layers):
         #     self.model.add(Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)))
+>>>>>>> d8bedf9c45befca41494a353bddfd916e1850b62
         # flatten output befor elast dense later
         self.model.add(Flatten())
         # dense takes in output dimensionality
@@ -54,7 +57,10 @@ class RNN:
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("===== FINISHED BUILDING MODEL ======")
+<<<<<<< HEAD
+=======
         # print(self.model.summary())
+>>>>>>> af1b03514a8fa987f6e8b094b1cee1718c6d1185
 
         self.layers = layers
         self.output_dim = output_dim
@@ -78,6 +84,8 @@ class RNN:
         print("===== TRAINING MODEL ======")
 
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
+
+        print(self.model.summary())
 
         print("===== FINISHED TRAINING MODEL ======")
         for i in range(100):
@@ -190,6 +198,8 @@ class CNN:
 
         history = self.model.fit(train_x, train_y, epochs=epochs, verbose=2, shuffle=False)
 
+        print(self.model.summary())
+
         print("===== FINISHED TRAINING MODEL ======")
         
         losses, accuracies = history.history['loss'], history.history['acc']
@@ -299,5 +309,5 @@ if __name__ == '__main__':
     pass
     
     # rnn = RNN()
-    # model = rnn.generate(100, 50, 3, 20, 10)
+    # model = rnn.generate(100, i50, 3, 20, 10)
     # print(model)

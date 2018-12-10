@@ -11,23 +11,66 @@ import datetime
 # find absolute distance avg(|A - B|) 
 
 
-def average_letters(letters):
-    '''
-    generate average matrices for each letter
-    :param letters (dict): dictionary of letter to list of matrices
-    :return keys, avgs, averages: letters, averages, and average dict
-    '''
-    averages = {}
-    keys, avgs = [], []
+class Template():
+    def __init__(self):
+        self.letters = []
+        self.averages = []
+        self.averages_dict = []
+        self.miss_dict = {}
 
-    for letter in letters:
-        samples = letters[letter]
-        avg = np.mean(samples, axis=0)
-        averages[letter] = avg
-        keys.append(letter)
-        avgs.append(avg)
-    
-    return keys, avgs, averages
+    def average_letters(self, letters_train):
+        '''
+        generate average matrices for each letter
+        :param letters (dict): dictionary of letter to list of matrices
+        :return keys, avgs, averages: letters, averages, and average dict
+        '''
+        averages = {}
+        keys, avgs = [], []
+
+        for letter in letters_train:
+            samples = letters_train[letter]
+            avg = np.mean(samples, axis=0)
+            averages[letter] = avg
+            keys.append(letter)
+            avgs.append(avg)
+
+        self.letters = keys
+        self.averages = avgs
+        self.averages_dict = averages
+        
+        return keys, avgs, averages
+
+    def find_closest(self, sample, distance_metric):
+        '''
+        find the index of the closest matrix using distance_metric
+        :param sample (np.array): number of the dataset
+        '''
+        dist = []
+        for avg in self.averages:
+            dist.append(np.average(cdist(sample, avg, metric=distance_metric)))
+
+        ind = np.argmin(dist)
+
+        return ind, dist
+
+    def test_letters(self, test_X, test_y, num2let, distance_metric):
+        predicted = []
+        accuracy = 0
+        for index, x in enumerate(test_X):
+            ind, dist = self.find_closest(x, distance_metric)
+            correct_ind = np.argmax(y_test[index])
+            predicted.append((self.letters[ind], num2let[correct_ind]))
+            if self.letters[ind] == num2let[correct_ind]:
+                accuracy +=1
+            else:
+                if num2let[correct_ind] in self.miss_dict:
+                    self.miss_dict[num2let[correct_ind]] +=1
+                else:
+                    self.miss_dict[num2let[correct_ind]] = 1
+
+        accuracy /= len(test_y)
+
+        return predicted, accuracy, self.miss_dict
 
 def generate_train_test(dataset_num):
     '''
@@ -41,44 +84,16 @@ def generate_train_test(dataset_num):
 
     return letters_train, letters_test, y_map
 
-def find_closest(sample, averages, distance_metric):
-    '''
-    find the index of the closest matrix using distance_metric
-    :param sample (np.array): number of the dataset
-    
-
-    '''
-    dist = []
-    for avg in averages:
-        dist.append(np.average(cdist(sample, avg, metric=distance_metric)))
-
-    ind = np.argmin(dist)
-
-    return ind, dist
-
-def test_letters(test_X, test_y, averages, num2let, letters, distance_metric):
-    predicted = []
-    incorrect = 0
-    for index, x in enumerate(test_X):
-        ind, dist = find_closest(x, averages, distance_metric)
-        correct_ind = np.argmax(y_test[index])
-        predicted.append((letters[ind], num2let[correct_ind]))
-        if letters[ind] == num2let[correct_ind]:
-            incorrect +=1
-
-    incorrect /= len(test_y)
-
-    return predicted, incorrect
-
-def write_to_file(losses, dataset):
-    best = min(losses, key = lambda t: t[1])
+def write_to_file(accs, dataset):
+    best = max(accs, key = lambda t: t[1])
     with open("results.txt", "a") as myfile:
         myfile.write("-------------------\n")
         myfile.write("TEMPLATE MATCHING: DATASET {}\n".format(dataset))
         myfile.write(str(datetime.datetime.now()) + '\n')
-        for metric, loss in losses:
-            myfile.write('metric: {}, loss: {}, acc: {}\n'.format(metric, loss, 1-loss))
-        myfile.write('BEST: metric: {}, loss: {}, acc: {}\n'.format(best[0], best[1], 1-best[1]))
+        for metric, acc, md in accs:
+            myfile.write('metric: {}, loss: {}, acc: {}\n'.format(metric, 1-acc, acc))
+            myfile.write('missed: {}\n'.format(str(md)))
+        myfile.write('BEST: metric: {}, loss: {}, acc: {}\n'.format(best[0], 1-best[1], best[1]))
 
 
 if __name__ == "__main__":
@@ -89,20 +104,22 @@ if __name__ == "__main__":
     X_train, y_train = to_matrices(letters_train, y_map)
     X_test, y_test = to_matrices(letters_test, y_map)
 
-    letters, averages, average_d = average_letters(letters_train)
+    template = Template()
+
+    letters, averages, average_d = template.average_letters(letters_train)
     sample = X_test[0]
 
-    ind, dist = find_closest(sample, averages, distance_metric='seuclidean')
-    correct_ind = np.argmax(y_test[0])
+    # ind, dist = template.find_closest(sample, averages, distance_metric='seuclidean')
+    # correct_ind = np.argmax(y_test[0])
 
     metrics = ['euclidean', 'seuclidean', 'sqeuclidean', 'cosine', 'correlation', 'chebyshev', 'canberra', 'mahalanobis']
 
-    losses = []
+    accs = []
     for metric in metrics:
-        predicted, loss = test_letters(X_test, y_test, averages, num2let, letters, distance_metric=metric)
-        print(metric, loss)
-        losses.append((metric, loss))
+        predicted, accuracy, md_1 = template.test_letters(X_test, y_test, num2let, distance_metric=metric)
+        print(metric, accuracy, md_1)
+        accs.append((metric, accuracy, md_1))
 
-    write_to_file(losses, dataset)
+    write_to_file(accs, dataset)
 
     
