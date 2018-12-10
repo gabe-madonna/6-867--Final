@@ -47,6 +47,10 @@ class RNN:
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("===== FINISHED BUILDING MODEL ======")
+<<<<<<< HEAD
+=======
+        # print(self.model.summary())
+>>>>>>> af1b03514a8fa987f6e8b094b1cee1718c6d1185
 
         self.layers = layers
         self.output_dim = output_dim
@@ -191,7 +195,7 @@ class CNN:
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         unique, counts = np.unique(misses, return_counts=True)
-        unique = [self.NUM2LET[u+1] for u in unique]
+        unique = [self.NUM2LET[u] for u in unique]
         miss_dict = dict(zip(unique, counts))
         print(miss_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
@@ -200,7 +204,7 @@ class CNN:
         for i in range(len(test_Y)):
             if np.argmax(test_Y[i]) == np.argmax(yhat[i]):
                 totalAccuracy += 1
-        totalAccuracy/= len(test_Y)
+        totalAccuracy /= len(test_Y)
         return totalAccuracy
 
         with open("results.txt", "a") as myfile:
