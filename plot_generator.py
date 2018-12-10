@@ -97,9 +97,9 @@ def main():
     n_layers = (1, 2, 3, 4, 5)
     n_units = (5, 10, 25, 50, 75)
     norm_ns = (5, 10, 15, 20, 30)
-    knn_ns = (1, 2, 4, 8, 16, 32)
+    knn_ns = (1, 2, 4, 8, 16, 32, 64, 128)
 
-    for model in models[2:3]:
+    for model in models[1:3]:
         params['model'] = model
         for dataset in datasets:
             params['data_set'] = dataset
@@ -144,14 +144,14 @@ def main():
             elif model == 'KNN':
 
                 params['norm_n'] = 15
-                params['knn_n'] = 8
+                params['knn_n'] = 16
 
                 for knn_n in knn_ns:
                     params['knn_n'] = knn_n
                     run(params)
 
                 params['norm_n'] = 15
-                params['knn_n'] = 8
+                params['knn_n'] = 16
 
                 for norm_n in norm_ns:
                     params['norm_n'] = norm_n
