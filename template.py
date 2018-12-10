@@ -70,7 +70,20 @@ class Template():
 
         accuracy /= len(test_y)
 
-        return predicted, accuracy, self.miss_dict
+        nums = np.array([np.argmax(yi) for yi in test_y])
+        # misses = nums[incorrects]
+        total_unique, total_counts = np.unique(nums, return_counts=True)
+        # unique, counts = np.unique(misses, return_counts=True)
+        # unique = [self.NUM2LET[u] for u in unique]
+        total_unique = [num2let[u] for u in total_unique]
+        # miss_dict = dict(zip(unique, counts))
+        total_dict = dict(zip(total_unique, total_counts))
+        error_dict = {k: self.miss_dict[k] / total_dict[k] for k in self.miss_dict.keys()}
+        # print('miss_dict:', self.miss_dict)
+        # print('totals_dict:', total_dict)
+        # print('error_dict:', error_dict)
+
+        return predicted, accuracy, error_dict
 
 def generate_train_test(dataset_num):
     '''
@@ -97,7 +110,7 @@ def write_to_file(accs, dataset):
 
 
 if __name__ == "__main__":
-    dataset = 2
+    dataset = 1
     letters_train, letters_test, y_map = generate_train_test(dataset)
     num2let = {value: key for (key, value) in y_map.items()}
 
@@ -112,7 +125,8 @@ if __name__ == "__main__":
     # ind, dist = template.find_closest(sample, averages, distance_metric='seuclidean')
     # correct_ind = np.argmax(y_test[0])
 
-    metrics = ['euclidean', 'seuclidean', 'sqeuclidean', 'cosine', 'correlation', 'chebyshev', 'canberra', 'mahalanobis']
+    # metrics = ['euclidean', 'seuclidean', 'sqeuclidean', 'cosine', 'correlation', 'chebyshev', 'canberra', 'mahalanobis']
+    metrics = ['euclidean']
 
     accs = []
     for metric in metrics:
