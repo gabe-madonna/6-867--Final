@@ -1,4 +1,4 @@
-from model import RNN, CNN, KNN
+from model import RNN, CNN, KNN, Template
 from preprocess import gen_letter_dict, partition, to_matrices, y_encode
 from utils import *
 from sklearn import metrics
@@ -60,8 +60,12 @@ def run(params):
         params['runtime'] = time.time() - t
 
     elif params['model'] == 'Template Matching':
-        return
-        # do model stuff
+        t = time.time()
+        template = Template()
+        template.average_letters(letters_train)
+        params['runtime'] = time.time() - t
+        params['accuracy'], params['error_dict'] = template.test_letters(X_test, y_test, NUM2LET, params['distance_metric'])
+
     else:
         raise ValueError('Unrecognized model type: {}'.format(params['model']))
 
@@ -85,7 +89,8 @@ def main():
               'accuracies': [],
               'loss': 0,
               'accuracy': 0,
-              'runtime': 0
+              'runtime': 0,
+              'distance_metric': ''
               }
 
     global datasets_dict
@@ -98,8 +103,9 @@ def main():
     n_units = (5, 10, 25, 50, 75)
     norm_ns = (5, 10, 15, 20, 30)
     knn_ns = (1, 2, 4, 8, 16, 32, 64, 128)
+    distance_metrics = ('euclidean', 'seuclidean', 'chebyshev', 'mahalanobis')
 
-    for model in models[1:3]:
+    for model in models[3:]:
         params['model'] = model
         for dataset in datasets:
             params['data_set'] = dataset
@@ -160,9 +166,17 @@ def main():
             elif model == 'Template Matching':
 
                 params['norm_n'] = 15
+                params['distance_metric'] = 'seuclidean'
 
                 for norm_n in norm_ns:
                     params['norm_n'] = norm_n
+                    run(params)
+
+                params['norm_n'] = 15
+                params['distance_metric'] = 'seuclidean'
+
+                for distance_metric in distance_metrics:
+                    params['distance_metric'] = distance_metric
                     run(params)
 
             else:

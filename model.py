@@ -8,6 +8,7 @@ import datetime
 import numpy as np
 import json
 import pickle
+from scipy.spatial.distance import cdist
 
 
 class RNN:
@@ -291,7 +292,9 @@ class KNN():
         print('missed {}/{}'.format(len(misses), len(y_hat)))
         return accuracy, error_dict
 
-class Template():
+
+class Template:
+
     def __init__(self):
         self.letters = []
         self.averages = []
@@ -334,23 +337,46 @@ class Template():
         return ind, dist
 
     def test_letters(self, test_X, test_y, num2let, distance_metric):
+
+        y_hat = self.modelPredict(test_X)
+        y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
+        incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
+        # print(sum(incorrects))
+        accuracy = sum(incorrects) / len(incorrects)
+        nums = np.array([np.argmax(yi) for yi in test_Y])
+        misses = nums[incorrects]
+        total_unique, total_counts = np.unique(nums, return_counts=True)
+        unique, counts = np.unique(misses, return_counts=True)
+        unique = [self.NUM2LET[u] for u in unique]
+        total_unique = [self.NUM2LET[u] for u in total_unique]
+        miss_dict = dict(zip(unique, counts))
+        total_dict = dict(zip(total_unique, total_counts))
+        error_dict = {k: miss_dict[k] / total_dict[k] for k in miss_dict.keys()}
+        # print('miss_dict:', miss_dict)
+        # print('totals_dict:', total_dict)
+        # print('error_dict:', error_dict)
+        print('missed {}/{}'.format(len(misses), len(y_hat)))
+        return accuracy, error_dict
+
+
+
         predicted = []
         accuracy = 0
         for index, x in enumerate(test_X):
             ind, dist = self.find_closest(x, distance_metric)
-            correct_ind = np.argmax(y_test[index])
+            correct_ind = np.argmax(test_y[index])
             predicted.append((self.letters[ind], num2let[correct_ind]))
             if self.letters[ind] == num2let[correct_ind]:
-                accuracy +=1
+                accuracy += 1
             else:
                 if num2let[correct_ind] in self.miss_dict:
-                    self.miss_dict[num2let[correct_ind]] +=1
+                    self.miss_dict[num2let[correct_ind]] += 1
                 else:
                     self.miss_dict[num2let[correct_ind]] = 1
 
         accuracy /= len(test_y)
 
-        return predicted, accuracy, self.miss_dict
+        return accuracy, self.miss_dict
 
 
 if __name__ == '__main__':
