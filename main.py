@@ -1,6 +1,7 @@
-from model import RNN, CNN
+from model import RNN, CNN, KNN
 from preprocess import gen_letter_dict, partition, to_matrices, y_encode
 from utils import *
+from sklearn import metrics
 import numpy as np
 import string
 
@@ -14,13 +15,28 @@ def main():
     X_test, y_test = to_matrices(letters_test, y_map)
     test_rnn(X_train, y_train, X_test, y_test, 125, n_labels, y_map)
     # test_cnn(X_train, y_train, X_test, y_test, 50)
+    if False:
+        knnX_train = []
+        knnX_test = []
+        for elem in X_train:
+            newArr = [point[1] for point in elem]
+            newArr.extend([point[0] for point in elem])
+            knnX_train.append(newArr)
+        for elem in X_test:
+            newArr = [point[1] for point in elem]
+            newArr.extend([point[0] for point in elem])
+            knnX_test.append(newArr)
+        knn = KNN(8)
+        knn.train(knnX_train, y_train)
+        y_pred = knn.modelPredict(knnX_test)
+        print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
 
 
 def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     # test RNN
     NUM2LET = {value: key for (key, value) in y_map.items()}
     model = RNN()
-    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=2)
+    model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=1)
     model.train(X_train, y_train, epochs=epochs)
     acc = model.test(X_test, y_test)
     return acc
