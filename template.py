@@ -16,6 +16,7 @@ class Template():
         self.letters = []
         self.averages = []
         self.averages_dict = []
+        self.miss_dict = {}
 
     def average_letters(self, letters_train):
         '''
@@ -54,17 +55,22 @@ class Template():
 
     def test_letters(self, test_X, test_y, num2let, distance_metric):
         predicted = []
-        incorrect = 0
+        accuracy = 0
         for index, x in enumerate(test_X):
             ind, dist = self.find_closest(x, distance_metric)
             correct_ind = np.argmax(y_test[index])
             predicted.append((self.letters[ind], num2let[correct_ind]))
             if self.letters[ind] == num2let[correct_ind]:
-                incorrect +=1
+                accuracy +=1
+            else:
+                if num2let[correct_ind] in self.miss_dict:
+                    self.miss_dict[num2let[correct_ind]] +=1
+                else:
+                    self.miss_dict[num2let[correct_ind]] = 1
 
-        incorrect /= len(test_y)
+        accuracy /= len(test_y)
 
-        return predicted, incorrect
+        return predicted, accuracy, self.miss_dict
 
 def generate_train_test(dataset_num):
     '''
@@ -78,19 +84,20 @@ def generate_train_test(dataset_num):
 
     return letters_train, letters_test, y_map
 
-def write_to_file(losses, dataset):
-    best = min(losses, key = lambda t: t[1])
+def write_to_file(accs, dataset):
+    best = max(accs, key = lambda t: t[1])
     with open("results.txt", "a") as myfile:
         myfile.write("-------------------\n")
         myfile.write("TEMPLATE MATCHING: DATASET {}\n".format(dataset))
         myfile.write(str(datetime.datetime.now()) + '\n')
-        for metric, loss in losses:
-            myfile.write('metric: {}, loss: {}, acc: {}\n'.format(metric, loss, 1-loss))
+        for metric, acc, md in accs:
+            myfile.write('metric: {}, loss: {}, acc: {}\n'.format(metric, 1-acc, acc))
+            myfile.write('missed: {}\n'.format(str(md)))
         myfile.write('BEST: metric: {}, loss: {}, acc: {}\n'.format(best[0], best[1], 1-best[1]))
 
 
 if __name__ == "__main__":
-    dataset = 2
+    dataset = 1
     letters_train, letters_test, y_map = generate_train_test(dataset)
     num2let = {value: key for (key, value) in y_map.items()}
 
@@ -107,12 +114,12 @@ if __name__ == "__main__":
 
     metrics = ['euclidean', 'seuclidean', 'sqeuclidean', 'cosine', 'correlation', 'chebyshev', 'canberra', 'mahalanobis']
 
-    losses = []
+    accs = []
     for metric in metrics:
-        predicted, loss = template.test_letters(X_test, y_test, num2let, distance_metric=metric)
-        print(metric, loss)
-        losses.append((metric, loss))
+        predicted, accuracy, md_1 = template.test_letters(X_test, y_test, num2let, distance_metric=metric)
+        print(metric, accuracy, md_1)
+        accs.append((metric, accuracy, md_1))
 
-    write_to_file(losses, dataset)
+    write_to_file(accs, dataset)
 
     
