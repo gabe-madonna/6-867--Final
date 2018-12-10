@@ -6,8 +6,8 @@ from numpy import ndarray, mean, arange
 import string
 
 HOME = '6-867--Final'
-# LETTERS = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
-# NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
+LETTERS1 = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
+NUM2LET1 = {i+1: LETTERS1[i] for i in range(len(LETTERS1))}
 # LETTERS = string.ascii_letters
 # NUM2LET = {i: letter for i, letter in enumerate(LETTERS)}
 # LET2NUM = {val: key for key, val in NUM2LET.items()}

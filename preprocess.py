@@ -123,7 +123,7 @@ def gen_labels_dict(fname):
     ind2let = {}
     keys = np.genfromtxt(fname, delimiter=",")
     for ind, key in enumerate(keys):
-        ind2let[ind+1] = NUM2LET[int(key)]
+        ind2let[ind+1] = NUM2LET1[int(key)]
     return ind2let
 
 

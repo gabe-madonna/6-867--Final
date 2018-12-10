@@ -13,7 +13,7 @@ def main():
     letters_train, letters_test = partition(letters, ratio=.2)
     X_train, y_train = to_matrices(letters_train, y_map)
     X_test, y_test = to_matrices(letters_test, y_map)
-    test_rnn(X_train, y_train, X_test, y_test, 125, n_labels, y_map)
+    test_rnn(X_train, y_train, X_test, y_test, 10, n_labels, y_map)
     # test_cnn(X_train, y_train, X_test, y_test, 50)
     if False:
         knnX_train = []
@@ -38,8 +38,7 @@ def test_rnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
     model = RNN()
     model.generate(NUM2LET=NUM2LET, hidden_size=25, input_shape=X_test[0].shape, output_dim=n_labels, layers=1)
     model.train(X_train, y_train, epochs=epochs)
-    acc = model.test(X_test, y_test)
-    return acc
+    model.test(X_test, y_test)
 
 
 def test_cnn(X_train, y_train, X_test, y_test, epochs, n_labels, y_map):
