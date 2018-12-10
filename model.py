@@ -10,8 +10,6 @@ import json
 import pickle
 
 
-
-
 class RNN:
 
     def __init__(self):
@@ -41,12 +39,7 @@ class RNN:
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
             self.model.add(LSTM(hidden_size, input_shape=input_shape, return_sequences=True))
-<<<<<<< HEAD
-=======
-        # flatten output befor elast dense later
-        # for i in range(layers):
-        #     self.model.add(Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)))
->>>>>>> d8bedf9c45befca41494a353bddfd916e1850b62
+
         # flatten output befor elast dense later
         self.model.add(Flatten())
         # dense takes in output dimensionality
@@ -57,10 +50,6 @@ class RNN:
         self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         print("===== FINISHED BUILDING MODEL ======")
-<<<<<<< HEAD
-=======
-        # print(self.model.summary())
->>>>>>> af1b03514a8fa987f6e8b094b1cee1718c6d1185
 
         self.layers = layers
         self.output_dim = output_dim
@@ -151,7 +140,6 @@ class RNN:
         return loss, acc, error_dict
 
 
-
 class CNN:
 
     def __init__(self):
@@ -162,6 +150,7 @@ class CNN:
         self.layers = 2
         self.epochs = 0
         self.NUM2LET = None
+
     def generate(self, NUM2LET, hidden_size=50, output_dim=20, input_shape=(50,3), layers=1):
         '''
         generate the model

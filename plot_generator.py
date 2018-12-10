@@ -11,7 +11,7 @@ def save_params(params):
     print(params)
     fname = 'plot_results.txt'
     with open(fname, 'a+') as f:
-        f.write(str(params))
+        f.write(str(params) + '\n')
 
 
 def run(params):
