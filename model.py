@@ -259,6 +259,7 @@ class CNN:
 
         return loss, acc, error_dict
 
+
 class KNN():
 
     def __init__(self, numNeighbors, NUM2LET):
@@ -285,6 +286,7 @@ class KNN():
         y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
         incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
         # print(sum(incorrects))
+        accuracy = sum(incorrects) / len(incorrects)
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         total_unique, total_counts = np.unique(nums, return_counts=True)
