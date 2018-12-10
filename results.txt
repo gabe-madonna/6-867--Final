@@ -103,7 +103,7 @@ Testing loss: 1.8746089228182015, acc: 0.46850393638210347
 HYPERPARAMS: Layers: 3, Hidden Size: 25, Output Dim: 48, Epochs: 50
 Misclassified files: {'M': 3, 'd': 11, 'q': 6, 'w': 2, 't': 16, 'm': 9, 'r': 9, 'Y': 10, 'E': 21, 'h': 20, 'Z': 2, 'n': 10, 'p': 4, 'A': 19, 'B': 9, 'f': 8, 'z': 4, 'G': 1, 'o': 11, 'D': 6, 's': 1, 'H': 16, 'V': 1, 'y': 9, 'j': 16, 'W': 2, 'u': 11, 'b': 5, 'g': 13, 'v': 8, 'k': 24, 'x': 19, 'l': 3, 'I': 7, 'a': 9, 'N': 2, 'P': 3, 'e': 13, 'i': 19, 'R': 7, 'F': 21, 'K': 6, 'Q': 5, 'c': 4}
 -------------------
-TEMPLATE MATCHING
+TEMPLATE MATCHING: DATASET 1
 2018-12-08 21:45:05.127663
 metric: euclidean, loss: 0.35398230088495575, acc: 0.6460176991150443
 metric: seuclidean, loss: 0.6867256637168142, acc: 0.3132743362831858

@@ -10,7 +10,7 @@ NUM2LET = {i+1: LETTERS[i] for i in range(len(LETTERS))}
 LET2NUM = {val: key for key, val in NUM2LET.items()}
 
 
-def plot_letter(letter, label=None, box=True):
+def plot_letter(letter, label=None, box=True, save_fig=False):
     '''
     plot a given letter
     :param letter: letter array
@@ -45,6 +45,10 @@ def plot_letter(letter, label=None, box=True):
 
     # plot letter and show
     plt.plot(x, y)
+
+    if save_fig:
+        plt.savefig('plots/'+label+'.png')
+        
     plt.show()
 
 
