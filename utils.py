@@ -77,6 +77,10 @@ def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False
         plt.plot(x, y, alpha=alpha, c='b')
 
 
+def reverse_dict(d):
+    return {value: key for (key, value) in d.items()}
+
+
 def graph_error_rates(model, error_dict, subtitle='', num_letters=None, best=True):
     '''
     :param model: (str) the model used

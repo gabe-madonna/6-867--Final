@@ -4,51 +4,71 @@ from utils import *
 from sklearn import metrics
 import numpy as np
 import string
+import time
+
 
 def save_params(params):
-    pass
+    fname = 'plot_results.txt'
+    with open(fname, 'a+') as f:
+        f.write(str(params))
 
 
 def run(params):
+    try:
 
-    if params['norm_n'] in datasets_dict[params['dataset']]:
-        dataset = datasets_dict[params['dataset']][params['norm_n']]
-    else:
-        data_set = gen_letter_dict(dataset=params['dataset'], norm_n=params['norm_n'],
-                            all_letters=True, filterr=set(string.ascii_letters))
-        datasets_dict[params['dataset']][params['norm_n']] = data_set
+        if params['norm_n'] in datasets_dict[params['dataset']]:
+            letters, y_map = datasets_dict[params['dataset']][params['norm_n']]
+        else:
+            (letters, y_map) = gen_letter_dict(dataset=params['dataset'], norm_n=params['norm_n'],
+                                all_letters=True, filterr=set(string.ascii_letters))
+            datasets_dict[params['dataset']][params['norm_n']] = (letters, y_map)
 
-    
+        NUM2LET = reverse_dict(y_map)
+        n_labels = len(y_map)
+        letters_train, letters_test = partition(letters, ratio=.2)
+        X_train, y_train = to_matrices(letters_train, y_map)
+        X_test, y_test = to_matrices(letters_test, y_map)
 
+        if params['model'] in ('RNN', 'CNN'):
+            if params['model'] == 'RNNN':
+                model = RNN()
+            else:
+                model = CNN()
 
+            model.generate(NUM2LET=NUM2LET, hidden_size=params['n_units'],
+                           input_shape=X_test[0].shape, output_dim=n_labels,
+                           layers=params['n_layers'])
+            t = time.time()
+            params['losses'], params['accuracies'], model.train(X_train, y_train, epochs=params['n_epochs'])
+            params['runtime'] = time.time() - t
+            params['loss'], params['accuracy'], params['error_dict'] = model.test(X_test, y_test)
 
+        elif params['model'] == 'KNN':
+            knnX_train = []
+            knnX_test = []
+            for elem in X_train:
+                newArr = [point[1] for point in elem]
+                newArr.extend([point[0] for point in elem])
+                knnX_train.append(newArr)
+            for elem in X_test:
+                newArr = [point[1] for point in elem]
+                newArr.extend([point[0] for point in elem])
+                knnX_test.append(newArr)
+            t = time.time()
+            knn = KNN(params['knn_n'])
+            knn.train(knnX_train, y_train)
+            y_pred = knn.modelPredict(knnX_test)
+            params['runtime'] = time.time() - t
+            params['loss'], params['accuracy'], params['error_dict'] = osfdspafdj
+            # print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
+        elif params['model'] == 'Template Matching':
+            do model stuff
+        else:
+            raise ValueError('Unrecognized model type: {}'.format(params['model']))
 
-
-
-
-    filt = set(string.ascii_letters)
-    letters, y_map = gen_letter_dict(dataset=2, norm_n=15, all_letters=True, filterr=filt)
-    n_labels = len(y_map)
-    letters_train, letters_test = partition(letters, ratio=.2)
-    X_train, y_train = to_matrices(letters_train, y_map)
-    X_test, y_test = to_matrices(letters_test, y_map)
-    test_rnn(X_train, y_train, X_test, y_test, 125, n_labels, y_map)
-    # test_cnn(X_train, y_train, X_test, y_test, 50)
-    if False:
-        knnX_train = []
-        knnX_test = []
-        for elem in X_train:
-            newArr = [point[1] for point in elem]
-            newArr.extend([point[0] for point in elem])
-            knnX_train.append(newArr)
-        for elem in X_test:
-            newArr = [point[1] for point in elem]
-            newArr.extend([point[0] for point in elem])
-            knnX_test.append(newArr)
-        knn = KNN(8)
-        knn.train(knnX_train, y_train)
-        y_pred = knn.modelPredict(knnX_test)
-        print("Accuracy: ", metrics.accuracy_score(y_test, y_pred))
+        save_params(params)
+    except:
+        print('couldnt execute for params \n{}'.format(str(params)))
 
 
 def main():
@@ -147,13 +167,3 @@ def main():
                 raise ValueError('Unrecognized model passed: {}'.format(model))
 
 
-
-
-
-
-
-
-        try:
-            plot(params)
-        except:
-            print('Couldnt plot', params)
