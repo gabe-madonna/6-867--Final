@@ -356,7 +356,7 @@ class Template:
         # print('totals_dict:', total_dict)
         # print('error_dict:', error_dict)
         print('missed {}/{}'.format(len(misses), len(y_hat)))
-        return accuracy, error_dict
+        return accuracy, error_dict asdfa
 
 
 
