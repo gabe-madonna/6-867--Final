@@ -93,11 +93,11 @@ def write_to_file(accs, dataset):
         for metric, acc, md in accs:
             myfile.write('metric: {}, loss: {}, acc: {}\n'.format(metric, 1-acc, acc))
             myfile.write('missed: {}\n'.format(str(md)))
-        myfile.write('BEST: metric: {}, loss: {}, acc: {}\n'.format(best[0], best[1], 1-best[1]))
+        myfile.write('BEST: metric: {}, loss: {}, acc: {}\n'.format(best[0], 1-best[1], best[1]))
 
 
 if __name__ == "__main__":
-    dataset = 1
+    dataset = 2
     letters_train, letters_test, y_map = generate_train_test(dataset)
     num2let = {value: key for (key, value) in y_map.items()}
 
