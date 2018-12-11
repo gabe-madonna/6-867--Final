@@ -276,7 +276,7 @@ class KNN():
         y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
         incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
         # print(sum(incorrects))
-        accuracy = sum(incorrects) / len(incorrects)
+        accuracy = 1 - sum(incorrects) / len(incorrects)
         nums = np.array([np.argmax(yi) for yi in test_Y])
         misses = nums[incorrects]
         total_unique, total_counts = np.unique(nums, return_counts=True)
@@ -361,9 +361,9 @@ class Template:
 
         total_dict = dict(zip(total_unique, total_counts))
         error_dict = {k: self.miss_dict[k] / total_dict[k] for k in self.miss_dict.keys()}
-        print('miss_dict:', self.miss_dict)
-        print('totals_dict:', total_dict)
-        print('error_dict:', error_dict)
+        # print('miss_dict:', self.miss_dict)
+        # print('totals_dict:', total_dict)
+        # print('error_dict:', error_dict)
 
         return accuracy, error_dict
 

@@ -5,12 +5,12 @@ import time
 import uuid
 
 
-
 def save_params(params):
     print(params)
     fname = 'plot_results.txt'
     with open(fname, 'a+') as f:
         f.write(str(params) + '\n')
+
 
 def filter_params(params, filters):
     good = []
@@ -34,6 +34,9 @@ def filter_params(params, filters):
 
 
 def run(params):
+    from model import RNN, CNN, KNN, Template
+    from preprocess import to_matrices, gen_letter_dict, partition
+
     # try:
 
     if params['norm_n'] in datasets_dict[params['data_set']]:
@@ -75,7 +78,7 @@ def run(params):
         t = time.time()
         knn = KNN(params['knn_n'], NUM2LET)
         knn.train(knnX_train, y_train)
-        params['error_dict'] = knn.get_stats(knnX_test, y_test)
+        params['accuracy'], params['error_dict'] = knn.get_stats(knnX_test, y_test)
         params['runtime'] = time.time() - t
 
     elif params['model'] == 'Template Matching':
@@ -124,7 +127,7 @@ def main_data():
     knn_ns = (1, 2, 4, 8, 16, 32, 64, 128)
     distance_metrics = ('euclidean', 'seuclidean', 'chebyshev', 'mahalanobis')
 
-    for model in models[3:]:
+    for model in models[2:3]:
         params['model'] = model
         for dataset in datasets:
             params['data_set'] = dataset
@@ -168,15 +171,15 @@ def main_data():
 
             elif model == 'KNN':
 
-                params['norm_n'] = 15
-                params['knn_n'] = 16
+                # params['norm_n'] = 15
+                # params['knn_n'] = 1
+                #
+                # for knn_n in knn_ns:
+                #     params['knn_n'] = knn_n
+                #     run(params)
 
-                for knn_n in knn_ns:
-                    params['knn_n'] = knn_n
-                    run(params)
-
                 params['norm_n'] = 15
-                params['knn_n'] = 16
+                params['knn_n'] = 1
 
                 for norm_n in norm_ns:
                     params['norm_n'] = norm_n
@@ -206,7 +209,7 @@ def main_plot():
     params = []
     with open('plot_results.txt') as f:
         for line in f.readlines():
-            print(line)
+            # print(line)
             params.append(eval(line))
 
 
@@ -281,8 +284,8 @@ def main_plot():
 
 
 
-    # graph accuracy by number of segments
-
+    # # graph accuracy by number of segments
+    #
     # accuracies_rnn = []
     # accuracies_cnn = []
     # accuracies_knn = []
@@ -293,7 +296,7 @@ def main_plot():
     #     print(norm_n)
     #     accuracies_rnn += [max([p['accuracy'] for p in filter_params(params, {'model': 'RNN', 'norm_n': norm_n, 'data_set': 2})])]
     #     accuracies_cnn += [max([p['accuracy'] for p in filter_params(params, {'model': 'CNN', 'norm_n': norm_n,'data_set': 2})])]
-    #     accuracies_knn += [max([p['accuracy'] for p in filter_params(params, {'model': 'KNN', 'norm_n': norm_n, 'data_set': 2})])]
+    #     accuracies_knn += [max([p['accuracy'] for p in filter_params(params, {'model': 'KNN', 'norm_n': norm_n, 'data_set': 2, 'knn_n': 1})])]
     #     accuracies_template += [max([p['accuracy'] for p in filter_params(params, {'model': 'Template Matching', 'norm_n': norm_n, 'data_set': 2})])]
     #
     # plt.plot(norm_ns, accuracies_rnn, label='RNN')
@@ -324,7 +327,7 @@ def main_plot():
     #     accuracies_cnn += [
     #         max([p['accuracy'] for p in filter_params(params, {'model': 'CNN', 'norm_n': norm_n, 'data_set': 1})])]
     #     accuracies_knn += [
-    #         max([p['accuracy'] for p in filter_params(params, {'model': 'KNN', 'norm_n': norm_n, 'data_set': 1})])]
+    #         max([p['accuracy'] for p in filter_params(params, {'model': 'KNN', 'norm_n': norm_n, 'data_set': 1, 'knn_n': 1})])]
     #     accuracies_template += [max([p['accuracy'] for p in filter_params(params, {'model': 'Template Matching', 'norm_n': norm_n, 'data_set': 1})])]
     #
     # plt.plot(norm_ns, accuracies_rnn, label='RNN')
@@ -372,52 +375,132 @@ def main_plot():
 
 
 
-    # graph error by letter
-    dicts = filter_params(params, {'model': 'RNN', 'data_set': 2})
-    error_dict_rnn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
-
-    dicts = filter_params(params, {'model': 'CNN', 'data_set': 2})
-    error_dict_cnn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
-
-    dicts = filter_params(params, {'model': 'KNN', 'data_set': 2})
-    error_dict_knn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict'][1]  # get highest accuracy one
-
-    dicts = filter_params(params, {'model': 'Template Matching', 'data_set': 2})
-    error_dict_template = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
-
-    to_plot = sorted(list(string.ascii_letters))
-    x_pos = arange(len(to_plot))
-
-    performance_rnn = [error_dict_rnn.get(letter, 0) for letter in to_plot]
-    performance_cnn = [error_dict_cnn.get(letter, 0) for letter in to_plot]
-    performance_knn = [error_dict_knn.get(letter, 0) for letter in to_plot]
-    performance_template = [error_dict_template.get(letter, 0) for letter in to_plot]
-
-    ax = plt.subplot(111)
+    # # graph error by letter
+    # dicts = filter_params(params, {'model': 'RNN', 'data_set': 2})
+    # error_dict_rnn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
+    #
+    # dicts = filter_params(params, {'model': 'CNN', 'data_set': 2})
+    # error_dict_cnn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
+    #
+    # dicts = filter_params(params, {'model': 'KNN', 'data_set': 2})
+    # error_dict_knn = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict'][1]  # get highest accuracy one
+    #
+    # dicts = filter_params(params, {'model': 'Template Matching', 'data_set': 2})
+    # error_dict_template = sorted(dicts, key=lambda p: p['accuracy'])[-1]['error_dict']  # get highest accuracy one
+    #
+    # to_plot = sorted(list(string.ascii_letters))
+    # x_pos = arange(len(to_plot))
+    #
+    # performance_rnn = [error_dict_rnn.get(letter, 0) for letter in to_plot]
+    # performance_cnn = [error_dict_cnn.get(letter, 0) for letter in to_plot]
+    # performance_knn = [error_dict_knn.get(letter, 0) for letter in to_plot]
+    # performance_template = [error_dict_template.get(letter, 0) for letter in to_plot]
+    #
+    # ax = plt.subplot(111)
     # ax.bar(x_pos, performance_rnn, align='center', alpha=.5, label='RNN')
     # ax.bar(x_pos, performance_cnn, align='center', alpha=.5, label='CNN', bottom=performance_rnn)
     # ax.bar(x_pos, performance_knn, align='center', alpha=.5, label='KNN',
     #        bottom=np.sum((performance_rnn, performance_cnn), axis=0))
     # ax.bar(x_pos, performance_template, align='center', alpha=.5, label='Template',
     #        bottom=np.sum((performance_rnn, performance_cnn, performance_knn), axis=0))
+    # # ax.bar(x_pos, performance_knn, align='center', alpha=.5, label='KNN')
+    # ax.bar(x_pos, performance_cnn, align='center', alpha=.5, label='CNN')
+    # ax.bar(x_pos, performance_rnn, align='center', alpha=.5, label='RNN',
+    #        bottom=performance_cnn)
+    #
+    # plt.xticks(x_pos, to_plot)
+    # plt.ylabel('Error')
+    # plt.xlabel('Letter')
+    # title = 'Error by Letter'
+    # subtitle = '(Dataset 2)'
+    # plt.figtext(.5, .95, title, fontsize=18, ha='center')
+    # plt.figtext(.5, .9, subtitle, fontsize=10, ha='center')
+    # plt.legend()
+    # plt.savefig('figures\\accuracy_by_letters_dataset_2_{}.png'.format(uuid.uuid4().hex))
+    # plt.show()
+    # plt.close('all')
 
 
-    ax.bar(x_pos, performance_knn, align='center', alpha=.5, label='KNN')
-    ax.bar(x_pos, performance_cnn, align='center', alpha=.5, label='CNN', bottom=performance_knn)
-    ax.bar(x_pos, performance_rnn, align='center', alpha=.5, label='RNN',
-           bottom=np.sum((performance_knn, performance_cnn), axis=0))
 
-    plt.xticks(x_pos, to_plot)
-    plt.ylabel('Error')
-    plt.xlabel('Letter')
-    title = 'Error by Letter'
-    subtitle = '(Dataset 2)'
-    plt.figtext(.5, .95, title, fontsize=18, ha='center')
-    plt.figtext(.5, .9, subtitle, fontsize=10, ha='center')
-    plt.legend()
-    plt.savefig('figures\\accuracy_by_letters_dataset_2_{}.png'.format(uuid.uuid4().hex))
-    plt.show()
-    plt.close('all')
+    # graph knn accuracy by nummber of neighbors
+    #
+    # accuracies = []
+    #
+    # knn_ns = (1, 2, 4, 8, 16, 32, 64, 128)
+    # for knn_n in knn_ns:
+    #     print(knn_n)
+    #     good = filter_params(params, {'model': 'KNN', 'knn_n': knn_n, 'norm_n': 15, 'data_set': 2})
+    #     good = [d for d in good if type(d['error_dict']) == dict]
+    #     accuracies += [max([p['accuracy'] for p in good])]
+    #
+    # plt.plot(knn_ns, accuracies)
+    # plt.ylabel('Accuracy')
+    # plt.xlabel('Number of Neighbors')
+    # title = 'Accuracies of KNN by Number of Neighbors'
+    # subtitle = '(Dataset 2'
+    # plt.figtext(.5, .95, title, fontsize=18, ha='center')
+    # plt.figtext(.5, .9, subtitle, fontsize=10, ha='center')
+    # # plt.legend()
+    # plt.savefig('figures\\knn_accuracy_by_number_of_neighbors_{}.png'.format(uuid.uuid4().hex))
+    # plt.show()
+    # plt.close('all')
+
+
+
+    # # # graph runtime by norm_n for each model
+    #
+    # runtimes_rnn = []
+    # runtimes_cnn = []
+    # runtimes_knn = []
+    # runtimes_template = []
+    #
+    # norm_ns = (5, 10, 15, 20, 30)
+    # for norm_n in norm_ns:
+    #     print(norm_n)
+    #     runtimes_rnn += [min([p['runtime'] for p in filter_params(params, {'model': 'RNN', 'norm_n': norm_n, 'data_set': 2, 'n_epochs': 50})])]
+    #     runtimes_cnn += [min([p['runtime'] for p in filter_params(params, {'model': 'CNN', 'norm_n': norm_n,'data_set': 2, 'n_epochs': 20})])]
+    #     runtimes_knn += [min([p['runtime'] for p in filter_params(params, {'model': 'KNN', 'norm_n': norm_n, 'data_set': 2})])]
+    #     runtimes_template += [min([p['runtime'] for p in filter_params(params, {'model': 'Template Matching', 'norm_n': norm_n, 'data_set': 2})])]
+    #
+    # plt.plot(norm_ns, runtimes_rnn, label='RNN')
+    # plt.plot(norm_ns, runtimes_cnn, label='CNN')
+    # plt.plot(norm_ns, runtimes_knn, label='KNN')
+    # plt.plot(norm_ns, runtimes_template, label='Template Matching')
+    #
+    # plt.ylabel('Runtime')
+    # plt.xlabel('N Segments')
+    # title = 'Runtime by Number of Letter Segments'
+    # subtitle = '(Dataset 2)'
+    # plt.figtext(.5, .95, title, fontsize=18, ha='center')
+    # plt.figtext(.5, .9, subtitle, fontsize=10, ha='center')
+    # plt.legend()
+    # plt.semilogy()
+    # plt.savefig('figures\\runtime_by_norm_n_dataset_2_{}.png'.format(uuid.uuid4().hex))
+    # plt.show()
+    # plt.close('all')
+
+    #
+    # # graph accuracy by distance metric used (Not Done)
+    #
+    # accuracies = []
+    # epochs = (10, 20, 40, 70, 100)
+    # for epoch in epochs:
+    #     print(epoch)
+    #     accuracies += [max([p['accuracy'] for p in filter_params(params,
+    #             {'model': 'RNN', 'norm_n': 15, 'n_layers': 1, 'data_set': 2, 'n_epochs': epoch})])]
+    #
+    # plt.plot(epochs, accuracies)
+    # plt.ylabel('Accuracy')
+    # plt.xlabel('Epochs')
+    # title = 'RNN Accuracies by Epoch'
+    # subtitle = '(Dataset 2, 15 segments, 1 layer)'
+    # plt.figtext(.5, .95, title, fontsize=18, ha='center')
+    # plt.figtext(.5, .9, subtitle, fontsize=10, ha='center')
+    # plt.savefig('figures\\accuracy_by_epochs_rnn_{}.png'.format(uuid.uuid4().hex))
+    # plt.show()
+    # plt.close('all')
+
+
 
 
 if __name__ == '__main__':
