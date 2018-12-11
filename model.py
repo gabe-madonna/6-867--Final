@@ -353,7 +353,19 @@ class Template:
 
         accuracy /= len(test_y)
 
-        return accuracy, self.miss_dict
+        nums = np.array([np.argmax(yi) for yi in test_y])
+
+        total_unique, total_counts = np.unique(nums, return_counts=True)
+
+        total_unique = [num2let[u] for u in total_unique]
+
+        total_dict = dict(zip(total_unique, total_counts))
+        error_dict = {k: self.miss_dict[k] / total_dict[k] for k in self.miss_dict.keys()}
+        print('miss_dict:', self.miss_dict)
+        print('totals_dict:', total_dict)
+        print('error_dict:', error_dict)
+
+        return accuracy, error_dict
 
 
 if __name__ == '__main__':
