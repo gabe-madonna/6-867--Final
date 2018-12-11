@@ -337,29 +337,6 @@ class Template:
         return ind, dist
 
     def test_letters(self, test_X, test_y, num2let, distance_metric):
-
-        y_hat = self.modelPredict(test_X)
-        y_hat = np.array([np.argmax(y_hat[i]) for i in range(len(y_hat))])
-        incorrects = [y_hat[i] != np.argmax(test_Y[i]) for i in range(len(y_hat))]
-        # print(sum(incorrects))
-        accuracy = sum(incorrects) / len(incorrects)
-        nums = np.array([np.argmax(yi) for yi in test_Y])
-        misses = nums[incorrects]
-        total_unique, total_counts = np.unique(nums, return_counts=True)
-        unique, counts = np.unique(misses, return_counts=True)
-        unique = [self.NUM2LET[u] for u in unique]
-        total_unique = [self.NUM2LET[u] for u in total_unique]
-        miss_dict = dict(zip(unique, counts))
-        total_dict = dict(zip(total_unique, total_counts))
-        error_dict = {k: miss_dict[k] / total_dict[k] for k in miss_dict.keys()}
-        # print('miss_dict:', miss_dict)
-        # print('totals_dict:', total_dict)
-        # print('error_dict:', error_dict)
-        print('missed {}/{}'.format(len(misses), len(y_hat)))
-        return accuracy, error_dict asdfa
-
-
-
         predicted = []
         accuracy = 0
         for index, x in enumerate(test_X):

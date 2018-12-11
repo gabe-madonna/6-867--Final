@@ -11,7 +11,7 @@ import datetime
 # find absolute distance avg(|A - B|) 
 
 
-class Template():
+class Template:
     def __init__(self):
         self.letters = []
         self.averages = []

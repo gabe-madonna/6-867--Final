@@ -4,6 +4,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 from numpy import ndarray, mean, arange
 import string
+import uuid
 
 HOME = '6-867--Final'
 LETTERS1 = ['a',  'b', 'c',  'd',  'e',  'g',  'h', 'l',  'm',  'n',  'o',  'p',  'q',  'r',  's',  'u',  'v',  'w',  'y',  'z']
@@ -25,7 +26,7 @@ def get_bounding_box(x, y):
     return Rectangle(xy, dx, dy)
 
 
-def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False):
+def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False, show=False):
     '''
     plot a given letter
     :param letters: list of letter arrays or one letter array
@@ -42,11 +43,14 @@ def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False
         if plot_avg:
             letter_avg = mean(letters, axis=0)
             x, y = letter_avg.T[:2]
-            plt.plot(x, y, alpha=1, c='k')
+            plt.plot(x, y, alpha=1, c='k', linewidth=5)
 
-        title = 'Samples of {}{}'.format(label, ' With Average' if plot_avg else '')
+        title = 'Samples of {}'.format(label)
         plt.figtext(.5, .9, title, fontsize=18, ha='center')
-        plt.show()
+        # plt.show()
+        plt.savefig('figures\\plot_letters_{}_{}.png'.format(label, uuid.uuid4().hex))
+        plt.close('all')
+
     else:
         assert type(letters) == ndarray
         assert ax is not None
