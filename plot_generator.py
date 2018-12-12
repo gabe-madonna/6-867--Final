@@ -43,7 +43,7 @@ def run(params):
         letters, y_map = datasets_dict[params['data_set']][params['norm_n']]
     else:
         (letters, y_map) = gen_letter_dict(dataset=params['data_set'], norm_n=params['norm_n'],
-                            all_letters=True, filterr=set(string.ascii_letters))
+                                           all_letters=True, filterr=set(string.ascii_letters))
         datasets_dict[params['data_set']][params['norm_n']] = (letters, y_map)
 
     NUM2LET = reverse_dict(y_map)
@@ -86,7 +86,8 @@ def run(params):
         template = Template()
         template.average_letters(letters_train)
         params['runtime'] = time.time() - t
-        params['accuracy'], params['error_dict'] = template.test_letters(X_test, y_test, NUM2LET, params['distance_metric'])
+        params['accuracy'], params['error_dict'] = template.test_letters(X_test, y_test, NUM2LET,
+                                                                         params['distance_metric'])
 
     else:
         raise ValueError('Unrecognized model type: {}'.format(params['model']))
@@ -97,7 +98,6 @@ def run(params):
 
 
 def main_data():
-
     params = {'model': 'RNN',
               'data_set': 0,
               'n_epochs': 0,
@@ -212,16 +212,12 @@ def main_plot():
             # print(line)
             params.append(eval(line))
 
-
-
     # plot letters
     # letters, y_map = gen_letter_dict(dataset=2, norm_n=15, all_letters=True, filterr=set(string.ascii_letters))
     # for letter in letters:
     #     # time.sleep(1)
     #     plot_letters(letters[letter], label='{}'.format(letter), alpha=.2, plot_avg=True)
     #
-
-
 
     # bargraph error by model, dataset
 
@@ -261,8 +257,6 @@ def main_plot():
     # plt.show()
     # plt.close('all')
 
-
-
     # graph accuracy by epochs in RNN dataset 2
     # accuracies = []
     # epochs = (10, 20, 40, 70, 100)
@@ -281,8 +275,6 @@ def main_plot():
     # plt.savefig('figures\\accuracy_by_epochs_rnn_{}.png'.format(uuid.uuid4().hex))
     # plt.show()
     # plt.close('all')
-
-
 
     # # graph accuracy by number of segments
     #
@@ -346,8 +338,6 @@ def main_plot():
     # plt.show()
     # plt.close('all')
 
-
-
     # graph accuracy by number of layers for rnn and cnn
 
     # accuracies_rnn = []
@@ -372,8 +362,6 @@ def main_plot():
     # plt.savefig('figures\\accuracy_by_layers_dataset_1_{}.png'.format(uuid.uuid4().hex))
     # plt.show()
     # plt.close('all')
-
-
 
     # # graph error by letter
     # dicts = filter_params(params, {'model': 'RNN', 'data_set': 2})
@@ -420,8 +408,6 @@ def main_plot():
     # plt.show()
     # plt.close('all')
 
-
-
     # graph knn accuracy by nummber of neighbors
     #
     # accuracies = []
@@ -444,8 +430,6 @@ def main_plot():
     # plt.savefig('figures\\knn_accuracy_by_number_of_neighbors_{}.png'.format(uuid.uuid4().hex))
     # plt.show()
     # plt.close('all')
-
-
 
     # # # graph runtime by norm_n for each model
     #
@@ -501,10 +485,48 @@ def main_plot():
     # plt.close('all')
 
 
+def misc():
+    # from model import RNN, CNN, KNN, Template
+    from preprocess import to_matrices, gen_letter_dict, partition
+
+    (letters, y_map) = gen_letter_dict(dataset=2, norm_n=20, all_letters=True, filterr=set(['A']))
+    NUM2LET = reverse_dict(y_map)
+    n_labels = len(y_map)
+    letters_train, letters_test = partition(letters, ratio=.2)
+
+    (letters1, y_map) = gen_letter_dict(dataset=1, norm_n=20, all_letters=True, filterr=set(['A']))
+
+    X_train, y_train = to_matrices(letters_train, y_map)
+    X_test, y_test = to_matrices(letters_test, y_map)
+    # model = RNN()
+    # model.generate(NUM2LET=NUM2LET, hidden_size=25,
+    #                input_shape=X_test[0].shape, output_dim=n_labels,
+    #                layers=1)
+    # model.train(X_train, y_train, epochs=50)
+    # print(model.test(X_test, y_test))
+    #
+    # knnX_train = []
+    # knnX_test = []
+    # for elem in X_train:
+    #     knnX_train.append(np.concatenate((elem[:, 0], elem[:, 1])))
+    # for elem in X_test:
+    #     knnX_test.append(np.concatenate((elem[:, 0], elem[:, 1])))
+    #
+    # for k in range(1, 10):
+    #     knn = KNN(k, NUM2LET)
+    #     knn.train(knnX_train, y_train)
+    #     print('k: {}'.format(k))
+    #     print(knn.get_stats(knnX_test, y_test))
+
+    plot_letters(letters['A'][:1], label='A', box=False, alpha=1, show=True)
+
+    plot_letters(letters1['a'][:1], label='a', box=False, alpha=1, show=True)
+
+
 
 
 if __name__ == '__main__':
-    main_plot()
+    # main_plot()
     # main_data()
-
-
+    print('debugging')
+    misc()

@@ -658,3 +658,39 @@ TEMPLATE MATCHING: DATASET 1
 metric: euclidean, loss: 0.6566371681415929, acc: 0.3433628318584071
 missed: {'a': 0.14705882352941177, 'c': 1.0, 'd': 0.967741935483871, 'e': 0.08108108108108109, 'g': 1.0, 'h': 0.96, 'l': 1.0, 'm': 0.96, 'n': 1.0, 'p': 0.8846153846153846, 'q': 1.0, 'r': 0.391304347826087, 's': 0.7307692307692307, 'u': 1.0, 'w': 1.0, 'y': 1.0, 'z': 0.5}
 BEST: metric: euclidean, loss: 0.6566371681415929, acc: 0.3433628318584071
+-------------------
+RNN
+2018-12-11 12:19:26.965367
+Testing loss: 0.37599997578703337, acc: 0.8998384491114702
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 50
+Misclassified files: {'A': 6, 'B': 1, 'D': 4, 'E': 3, 'F': 1, 'G': 5, 'H': 5, 'I': 4, 'J': 4, 'K': 10, 'L': 1, 'M': 1, 'N': 1, 'P': 1, 'Q': 2, 'T': 1, 'U': 3, 'V': 4, 'X': 1, 'Y': 3, 'Z': 1}
+-------------------
+RNN
+2018-12-11 12:22:25.547171
+Testing loss: 0.3128973008983547, acc: 0.9095315029047225
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 100
+Misclassified files: {'A': 3, 'B': 2, 'D': 2, 'E': 6, 'F': 2, 'G': 1, 'H': 7, 'I': 1, 'J': 2, 'K': 6, 'M': 3, 'N': 2, 'Q': 1, 'S': 2, 'U': 3, 'V': 3, 'X': 3, 'Y': 5, 'Z': 2}
+-------------------
+RNN
+2018-12-11 12:30:27.343078
+Testing loss: 0.5626658560205642, acc: 0.8836833601621896
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 100
+Misclassified files: {'A': 3, 'B': 2, 'C': 3, 'D': 3, 'E': 8, 'F': 6, 'H': 3, 'I': 6, 'J': 4, 'K': 6, 'N': 3, 'O': 1, 'Q': 3, 'R': 2, 'T': 2, 'U': 9, 'V': 1, 'X': 4, 'Y': 1, 'Z': 2}
+-------------------
+RNN
+2018-12-11 12:31:49.957963
+Testing loss: 0.3553114075255798, acc: 0.9030694668820679
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 50
+Misclassified files: {'A': 3, 'B': 1, 'C': 2, 'D': 1, 'E': 2, 'F': 3, 'G': 1, 'H': 5, 'I': 4, 'J': 3, 'K': 4, 'M': 2, 'O': 3, 'P': 1, 'Q': 2, 'S': 1, 'U': 12, 'W': 1, 'X': 3, 'Y': 5, 'Z': 1}
+-------------------
+RNN
+2018-12-11 12:38:14.448368
+Testing loss: 0.31989569444623256, acc: 0.9201388888888888
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 50
+Misclassified files: {'B': 2, 'C': 1, 'D': 1, 'E': 2, 'F': 4, 'G': 1, 'H': 3, 'I': 3, 'J': 4, 'K': 5, 'L': 2, 'M': 2, 'P': 2, 'Q': 1, 'S': 1, 'T': 1, 'U': 1, 'V': 4, 'W': 3, 'X': 2, 'Y': 1}
+-------------------
+RNN
+2018-12-11 12:41:24.449362
+Testing loss: 0.4000935458496913, acc: 0.8875838918173873
+HYPERPARAMS: Layers: 1, Hidden Size: 25, Output Dim: 26, Epochs: 50
+Misclassified files: {'a': 6, 'b': 2, 'd': 1, 'f': 6, 'g': 7, 'j': 1, 'k': 5, 'm': 3, 'n': 2, 'o': 3, 'p': 2, 'q': 4, 'r': 5, 's': 3, 't': 3, 'u': 6, 'x': 2, 'y': 4, 'z': 2}

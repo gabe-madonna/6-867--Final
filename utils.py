@@ -45,7 +45,7 @@ def plot_letters(letters, label='', box=False, ax=None, alpha=.5, plot_avg=False
             x, y = letter_avg.T[:2]
             plt.plot(x, y, alpha=1, c='k', linewidth=5)
 
-        title = 'Samples of {}'.format(label)
+        title = 'Sample{} of {}'.format('s' if len(letters) > 1 else '', label)
         plt.figtext(.5, .9, title, fontsize=18, ha='center')
         # plt.show()
         plt.savefig('figures\\plot_letters_{}_{}.png'.format(label, uuid.uuid4().hex))

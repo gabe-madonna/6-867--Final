@@ -39,7 +39,7 @@ class RNN:
 
         # 50 for number of timesteps, 3 for features
         for i in range(layers):
-            self.model.add(LSTM(hidden_size, input_shape=input_shape, return_sequences=True))
+            self.model.add(Bidirectional(LSTM(hidden_size, input_shape=input_shape, return_sequences=True)))
 
         # flatten output befor elast dense later
         self.model.add(Flatten())
